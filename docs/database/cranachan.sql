@@ -116,7 +116,7 @@ CREATE TABLE `samples` (
 -- ----------------------------
 DROP TABLE IF EXISTS `samples_to_datasets`;
 CREATE TABLE `samples_to_datasets` (
-  `id` bigint(11) NOT NULL,
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
   `doi` text,
   `sample_id` int(11) NOT NULL,
   `dataset_id` int(11) NOT NULL,
