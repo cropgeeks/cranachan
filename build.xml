@@ -23,6 +23,7 @@
 	</target>
 
 	<target name="compile">
+		<mkdir dir="${cls}"/>
 		<javac srcdir="${src}" destdir="${cls}" source="8" target="8" debug="true" includeantruntime="false">
 			<classpath refid="project.classpath"/>
 			<!-- To use the bit below (for JDK9), replace MINUSMINUS with those two characters that aren't allowed in XML comments -->
