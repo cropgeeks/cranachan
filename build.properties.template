@@ -1,0 +1,5 @@
+tomcat.manager.url = http://143.234.127.88:8080/manager/text
+
+tomcat.manager.username = 
+tomcat.manager.password = 
+tomcat.manager.app = barley-snp

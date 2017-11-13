@@ -1,0 +1,60 @@
+<project name="BarleySNP" default="compile" basedir=".">
+
+	<property file="build.properties"/>
+
+	<property name="web" location="web"/>
+	<property name="src" location="src"/>
+	<property name="lib" location="lib"/>
+	<property name="cls" location="classes"/>
+	<property name="war" value="${tomcat.manager.app}.war"/>
+
+	<!-- Development classpath -->
+	<path id="project.classpath">
+		<pathelement path="${cls}"/>
+		<fileset dir="${lib}"/>
+	</path>
+
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${cls}" includes="**/*"/>
+			<fileset file="${jar}"/>
+			<fileset file="${war}"/>
+		</delete>
+	</target>
+
+	<target name="compile">
+		<javac srcdir="${src}" destdir="${cls}" source="8" target="8" debug="true" includeantruntime="false">
+			<classpath refid="project.classpath"/>
+			<!-- To use the bit below (for JDK9), replace MINUSMINUS with those two characters that aren't allowed in XML comments -->
+			<!--<compilerarg line="MINUSMINUSadd-modules java.xml.bind -Xlint:deprecation" />-->
+			<compilerarg line="-Xlint:deprecation" />
+		</javac>
+	</target>
+
+	<target name="war" depends="clean,compile">
+		<copy todir="${tmp}" flatten="true">
+			<fileset dir="${lib}">
+				<exclude name="**/lib-devel/**"/>
+			</fileset>
+		</copy>
+		<war destfile="${war}" update="false" basedir="${web}">
+			<!--<webinf dir="${web}/WEB-INF"/>-->
+			<!--<metainf dir="${web}/META-INF"/>-->
+			<classes dir="${cls}"/>
+			<lib dir="${tmp}"/>
+		</war>
+		<delete dir="${tmp}"/>
+
+		<taskdef name="undeploy" classpathref="project.classpath"
+			classname="org.apache.catalina.ant.UndeployTask"/>
+		<taskdef name="deploy" classpathref="project.classpath"
+			classname="org.apache.catalina.ant.DeployTask"/>
+
+		<undeploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
+			path="/${tomcat.manager.app}" failOnError="false"/>
+
+		<deploy url="${tomcat.manager.url}"	username="${tomcat.manager.username}" password="${tomcat.manager.password}"
+			path="/${tomcat.manager.app}" war="${war}"/>
+	</target>
+
+</project>
