@@ -33,6 +33,17 @@
 	</target>
 
 	<target name="war" depends="clean,compile">
+		<copy file="web/context.xml.template"
+			  tofile="web/context.xml"
+			  overwrite="true">
+			<filterset>
+				<filter token="datasource.cranachan" value="${datasource.cranachan}"/>
+				<filter token="database.cranachan.username" value="${database.cranachan.username}"/>
+				<filter token="database.cranachan.password" value="${database.cranachan.password}"/>
+				<filter token="database.cranachan.url" value="${database.cranachan.url}"/>
+			</filterset>
+		</copy>
+
 		<copy todir="${tmp}" flatten="true">
 			<fileset dir="${lib}">
 				<exclude name="**/lib-devel/**"/>
@@ -40,7 +51,7 @@
 		</copy>
 		<war destfile="${war}" update="false" basedir="${web}">
 			<!--<webinf dir="${web}/WEB-INF"/>-->
-			<!--<metainf dir="${web}/META-INF"/>-->
+			<metainf file="web/context.xml" />
 			<classes dir="${cls}"/>
 			<lib dir="${tmp}"/>
 		</war>
