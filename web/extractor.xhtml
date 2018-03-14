@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"
+	  xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:jsf="http://xmlns.jcp.org/jsf"
+	  xmlns:p="http://primefaces.org/ui">
+
+  <head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <title>Barley SNPs</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Custom styles for this template -->
+    <link href="vendor/bootstrap/css/style.css" rel="stylesheet"/>
+
+    <!-- Custom styles for this template -->
+    <style>
+      body {
+        padding-top: 54px;
+      }
+      @media (min-width: 992px) {
+        body {
+          padding-top: 56px;
+        }
+      }
+
+    </style>
+
+	 <!--<f:metadata>
+		  <f:viewParam name="datasetId" value="#{extractorManagedBean.dataset.id}" />
+	  </f:metadata>-->
+
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">Barley SNPs</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!--<div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact</a>
+            </li>
+          </ul>
+        </div>-->
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+      <div class="row top-buffer">
+      	<div class="col-sm-6">
+      		<form jsf:id="form">
+      			<fieldset>
+      				<legend>Setup extraction</legend>
+		      		<div class="form-group row">
+			        	<label class="col-sm-4 col-form-label" for="select">Pick chromosome</label>
+			        	<div class="col-sm-8">
+							<h:selectOneMenu id="select" name="chromosome" value="#{extractorManagedBean.selectedChromosome}" class="form-control">
+								<f:selectItems value="#{extractorManagedBean.reference.chromosomes}" var="chromosome" itemValue="#{chromosome.name}" itemLabel="#{chromosome.name}"/>
+							</h:selectOneMenu>
+				        </div>
+		        	</div>
+		        	<div class="form-group row">
+			        	<label class="col-sm-4 col-form-label" for="start">Start</label>
+			        	<div class="col-sm-8">
+			    				<input class="form-control" type="text" name="start" id="start" placeholder="1" jsf:value="#{extractorManagedBean.extractStart}"/>
+			    			</div>
+			    		</div>
+			    		<div class="form-group row">
+			        	<label class="col-sm-4 col-form-label" for="end">End</label>
+			        	<div class="col-sm-8">
+			    				<input class="form-control" type="text" name="end" id="end" placeholder="300000" jsf:value="#{extractorManagedBean.extractEnd}"/>
+			    			</div>
+			    		</div>
+			    		<div class="form-group row">
+			    			<div class="mx-auto col-sm-4">
+								<h:commandButton type="submit" class="form-control" value="Extract">
+									<p:fileDownload value="#{extractorManagedBean.file}" />
+								</h:commandButton>
+			    			</div>
+			    		</div>
+			    	</fieldset>
+		    	</form>
+	      </div>
+	      <div class="col-sm-6">
+	      	<table class="table table-striped table-bordered">
+	      		<thead>
+	      			<tr>
+	      				<th>Chromosome</th>
+	      				<th>Length</th>
+	      			</tr>
+	      		</thead>
+				<tbody>
+					<ui:repeat value="#{extractorManagedBean.reference.chromosomes}" var="chromosome">
+						<tr>
+							<td>#{chromosome.name}</td>
+							<td>#{chromosome.length}</td>
+						</tr>
+					</ui:repeat>
+				</tbody>
+	      	</table>
+	      </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/popper/popper.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  </body>
+
+</html>
