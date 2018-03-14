@@ -22,7 +22,7 @@ hs_err_pid*
 
 # Project specific settings
 build.properties
-web/context.xml
+web/META-INF/context.xml
 
 # IntelliJ IDEA specific settings
 .idea

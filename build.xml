@@ -33,8 +33,8 @@
 	</target>
 
 	<target name="war" depends="clean,compile">
-		<copy file="web/context.xml.template"
-			  tofile="web/context.xml"
+		<copy file="web/META-INF/context.xml.template"
+			  tofile="web/META-INF/context.xml"
 			  overwrite="true">
 			<filterset>
 				<filter token="datasource.cranachan" value="${datasource.cranachan}"/>
@@ -50,8 +50,6 @@
 			</fileset>
 		</copy>
 		<war destfile="${war}" update="false" basedir="${web}">
-			<!--<webinf dir="${web}/WEB-INF"/>-->
-			<metainf file="web/context.xml" />
 			<classes dir="${cls}"/>
 			<lib dir="${tmp}"/>
 		</war>
