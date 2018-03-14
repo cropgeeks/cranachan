@@ -16,6 +16,7 @@ import com.google.gson.*;
 public class DatasetDAO
 {
 	private static final String ALL_DATASETS = "SELECT * FROM datasets";
+	private static final String DATASET_BY_ID = "SELECT * FROM datasets WHERE id = ?";
 
 	@Resource(name = "jdbc/cranachan")
 	private DataSource ds;
@@ -44,6 +45,25 @@ public class DatasetDAO
 		}
 
 		return datasets;
+	}
+
+	public Dataset getById(String id)
+	{
+		Dataset dataset = new Dataset();
+
+		try (Connection con = ds.getConnection();
+			 PreparedStatement stmt = DatabaseUtils.createByIdStatement(con, DATASET_BY_ID, id);
+			 ResultSet resultSet = stmt.executeQuery())
+		{
+			if (resultSet.next())
+				dataset = getDataset(resultSet);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return dataset;
 	}
 
 	private Dataset getDataset(ResultSet resultSet)
