@@ -34,9 +34,9 @@
     <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
     -->
 
-    <Resource name="@datasource.cranachan@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-        type="javax.sql.DataSource" maxTotal="30" maxIdle="10" maxWaitMillis="10000" username="@database.cranachan.username@"
-        password="@database.cranachan.password@" driverClassName="com.mysql.jdbc.Driver" url="@database.cranachan.url@"
+    <Resource name="@cranachan.datasource@" auth="Container" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+        type="javax.sql.DataSource" maxTotal="30" maxIdle="10" maxWaitMillis="10000" username="@cranachan.db.username@"
+        password="@cranachan.db.password@" driverClassName="com.mysql.jdbc.Driver" url="@cranachan.db.url@"
         removeAbandoned="true" logAbandoned="true" timeBetweenEvictionRunsMillis = "34000" validationQuery="SELECT 1"
         validationInterval="34" testOnBorrow="true" removeAbandonedTimeout="55" minEvictableIdleTimeMillis="30000" closeMethod="close"/>
 </Context>

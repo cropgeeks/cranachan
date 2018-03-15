@@ -7,7 +7,7 @@
 	version="3.0"
 	metadata-complete="true">
 
-	<display-name>BarleySNP</display-name>
+	<display-name>Cranachan</display-name>
 
 	<context-param>
 		<param-name>bcfTools</param-name>

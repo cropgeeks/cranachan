@@ -1,5 +1,10 @@
-tomcat.manager.url = http://143.234.127.88:8080/manager/text
+tomcat.manager.url = http://hostname:8080/manager/text
 
-tomcat.manager.username = 
-tomcat.manager.password = 
-tomcat.manager.app = barley-snp
+tomcat.manager.username =
+tomcat.manager.password =
+tomcat.manager.app = cranachan
+
+cranachan.datasource = jdbc/cranachan
+cranachan.db.username = 
+cranachan.db.password = 
+cranachan.db.url = jdbc:mysql://hostname:3306/cranachan

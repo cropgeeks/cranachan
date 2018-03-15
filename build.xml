@@ -1,4 +1,4 @@
-<project name="BarleySNP" default="compile" basedir=".">
+<project name="Cranachan" default="compile" basedir=".">
 
 	<property file="build.properties"/>
 
@@ -37,24 +37,21 @@
 			  tofile="web/META-INF/context.xml"
 			  overwrite="true">
 			<filterset>
-				<filter token="datasource.cranachan" value="${datasource.cranachan}"/>
-				<filter token="database.cranachan.username" value="${database.cranachan.username}"/>
-				<filter token="database.cranachan.password" value="${database.cranachan.password}"/>
-				<filter token="database.cranachan.url" value="${database.cranachan.url}"/>
+				<filter token="cranachan.datasource" value="${cranachan.datasource}"/>
+				<filter token="cranachan.db.username" value="${cranachan.db.username}"/>
+				<filter token="cranachan.db.password" value="${cranachan.db.password}"/>
+				<filter token="cranachan.db.url" value="${cranachan.db.url}"/>
 			</filterset>
 		</copy>
 
-		<copy todir="${tmp}" flatten="true">
-			<fileset dir="${lib}">
-				<exclude name="**/lib-devel/**"/>
-			</fileset>
-		</copy>
 		<war destfile="${war}" update="false" basedir="${web}">
+			<exclude name="**/*.template"/>
 			<classes dir="${cls}"/>
-			<lib dir="${tmp}"/>
+			<lib dir="${lib}">
+				<exclude name="**/lib-devel/**"/>
+			</lib>
 		</war>
-		<delete dir="${tmp}"/>
-
+		
 		<taskdef name="undeploy" classpathref="project.classpath"
 			classname="org.apache.catalina.ant.UndeployTask"/>
 		<taskdef name="deploy" classpathref="project.classpath"
@@ -65,6 +62,8 @@
 
 		<deploy url="${tomcat.manager.url}"	username="${tomcat.manager.username}" password="${tomcat.manager.password}"
 			path="/${tomcat.manager.app}" war="${war}"/>
+
+		<delete file="${war}"/>
 	</target>
 
 </project>
