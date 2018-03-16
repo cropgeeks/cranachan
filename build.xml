@@ -17,7 +17,6 @@
 	<target name="clean">
 		<delete includeemptydirs="true">
 			<fileset dir="${cls}" includes="**/*"/>
-			<fileset file="${jar}"/>
 			<fileset file="${war}"/>
 		</delete>
 	</target>
