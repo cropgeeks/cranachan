@@ -33,16 +33,10 @@
 	</target>
 
 	<target name="war" depends="clean,compile">
-		<copy file="web/META-INF/context.xml.template"
-			  tofile="web/META-INF/context.xml"
-			  overwrite="true">
-			<filterset>
-				<filter token="cranachan.datasource" value="${cranachan.datasource}"/>
-				<filter token="cranachan.db.username" value="${cranachan.db.username}"/>
-				<filter token="cranachan.db.password" value="${cranachan.db.password}"/>
-				<filter token="cranachan.db.url" value="${cranachan.db.url}"/>
-			</filterset>
-		</copy>
+		<filter filtersfile="build.properties"/>
+		<copy file="${web}/META-INF/context.xml.template"
+			  tofile="${web}/META-INF/context.xml"
+			  overwrite="true" filtering="true"/>
 
 		<war destfile="${war}" update="false" basedir="${web}">
 			<exclude name="**/*.template"/>
@@ -51,7 +45,7 @@
 				<exclude name="**/lib-devel/**"/>
 			</lib>
 		</war>
-		
+
 		<taskdef name="undeploy" classpathref="project.classpath"
 			classname="org.apache.catalina.ant.UndeployTask"/>
 		<taskdef name="deploy" classpathref="project.classpath"
@@ -64,6 +58,7 @@
 			path="/${tomcat.manager.app}" war="${war}"/>
 
 		<delete file="${war}"/>
+		<delete file="${web}/META-INF/context.xml"/>
 	</target>
 
 </project>
