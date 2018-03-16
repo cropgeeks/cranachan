@@ -119,7 +119,11 @@
 					<ui:repeat value="#{extractorManagedBean.reference.chromosomes}" var="chromosome">
 						<tr>
 							<td>#{chromosome.name}</td>
-							<td>#{chromosome.length}</td>
+							<td>
+								<h:outputText value="#{chromosome.length}">
+									<f:convertNumber pattern="#,###"/>
+								</h:outputText>
+							</td>
 						</tr>
 					</ui:repeat>
 				</tbody>

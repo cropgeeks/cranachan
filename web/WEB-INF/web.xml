@@ -11,11 +11,11 @@
 
 	<context-param>
 		<param-name>bcfTools</param-name>
-		<param-value>/usr/local/tomcat/bcftools-1.5/bin/bcftools</param-value>
+		<param-value>/usr/bin/bcftools</param-value>
 	</context-param>
 	<context-param>
 		<param-name>tmpDir</param-name>
-		<param-value>/tmp</param-value>
+		<param-value>/data/tmp</param-value>
 	</context-param>
 
 	<servlet>
