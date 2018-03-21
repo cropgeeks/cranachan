@@ -24,6 +24,8 @@ public class ExtractorManagedBean implements Serializable
 	private long extractStart;
 	private long extractEnd;
 
+	private List<Sample> samples;
+
 	private String tmpDir;
 	private String bcfToolsPath;
 
@@ -33,6 +35,8 @@ public class ExtractorManagedBean implements Serializable
 	private DatasetDAO datasetDAO;
 	@Inject
 	private ReferenceDAO referenceDAO;
+	@Inject
+	private SampleDAO sampleDAO;
 
 	public ExtractorManagedBean()
 	{
@@ -50,6 +54,7 @@ public class ExtractorManagedBean implements Serializable
 
 		dataset = datasetDAO.getById(datasetId);
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
+		samples = sampleDAO.getByDatasetId(datasetId);
 	}
 
 	public StreamedContent getFile()
@@ -104,4 +109,7 @@ public class ExtractorManagedBean implements Serializable
 
 	public void setExtractEnd(long extractEnd)
 		{ this.extractEnd = extractEnd; }
+
+	public List<Sample> getSamples()
+		{ return samples; }
 }
