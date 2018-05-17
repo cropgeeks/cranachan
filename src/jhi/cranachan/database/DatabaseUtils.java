@@ -13,4 +13,21 @@ public class DatabaseUtils
 
 		return statement;
 	}
+
+	public static PreparedStatement createInsertStatement(Connection con, String query, Object... values)
+			throws SQLException
+	{
+		PreparedStatement stmt = con.prepareStatement(query);
+
+		if(values != null)
+		{
+			int i = 1;
+			for (Object value : values)
+			{
+				stmt.setString(i++, value.toString());
+			}
+		}
+
+		return stmt;
+	}
 }

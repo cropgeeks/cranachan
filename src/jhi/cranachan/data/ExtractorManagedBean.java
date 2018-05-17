@@ -1,30 +1,34 @@
 package jhi.cranachan.data;
 
+import org.primefaces.model.*;
+
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
+
 import javax.annotation.*;
 import javax.faces.context.*;
 import javax.faces.view.*;
 import javax.inject.*;
 
-import jhi.cranachan.bcftools.BcfToolsView;
+import jhi.cranachan.bcftools.*;
 import jhi.cranachan.database.*;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 @Named
 @ViewScoped
 public class ExtractorManagedBean implements Serializable
 {
-	private Dataset dataset;
+	private Dataset   dataset;
 	private Reference reference;
 
 	private String selectedChromosome;
-	private long extractStart;
-	private long extractEnd;
+	private long   extractStart;
+	private long   extractEnd;
 
-	private List<Sample> samples;
+	private List<Sample>          samples;
+	private List<Sample>          selectedSamples;
+	private DualListModel<Sample> sampleModel;
+	private String                sampleGroupName;
 
 	private String tmpDir;
 	private String bcfToolsPath;
@@ -32,11 +36,13 @@ public class ExtractorManagedBean implements Serializable
 	private StreamedContent file;
 
 	@Inject
-	private DatasetDAO datasetDAO;
+	private DatasetDAO    datasetDAO;
 	@Inject
-	private ReferenceDAO referenceDAO;
+	private ReferenceDAO  referenceDAO;
 	@Inject
-	private SampleDAO sampleDAO;
+	private SampleDAO     sampleDAO;
+	@Inject
+	private SampleListDAO sampleListDAO;
 
 	public ExtractorManagedBean()
 	{
@@ -55,6 +61,8 @@ public class ExtractorManagedBean implements Serializable
 		dataset = datasetDAO.getById(datasetId);
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
 		samples = sampleDAO.getByDatasetId(datasetId);
+		selectedSamples = new ArrayList<>();
+		sampleModel = new DualListModel<>(samples, selectedSamples);
 	}
 
 	public StreamedContent getFile()
@@ -63,10 +71,10 @@ public class ExtractorManagedBean implements Serializable
 		try
 		{
 			BcfToolsView view = new BcfToolsView(new File(dataset.getFilepath()))
-				.withOnlySNPs()
-				.withVCFOutput()
-				.withRegions(selectedChromosome, extractStart, extractEnd)
-				.withOutputFile(output);
+					.withOnlySNPs()
+					.withVCFOutput()
+					.withRegions(selectedChromosome, extractStart, extractEnd)
+					.withOutputFile(output);
 
 			view.run("BCFTOOLS", tmpDir);
 
@@ -78,6 +86,19 @@ public class ExtractorManagedBean implements Serializable
 		}
 
 		return new DefaultStreamedContent();
+	}
+
+	public String createList()
+	{
+		List<Sample> selected = sampleModel.getTarget();
+
+		String value = selected.stream()
+							   .map(Sample::getName)
+							   .collect(Collectors.joining("\t"));
+
+		System.out.println(sampleListDAO.addList(sampleGroupName, value));
+
+		return "";
 	}
 
 	public Dataset getDataset()
@@ -112,4 +133,16 @@ public class ExtractorManagedBean implements Serializable
 
 	public List<Sample> getSamples()
 		{ return samples; }
+
+	public DualListModel<Sample> getSampleModel()
+		{ return sampleModel; }
+
+	public void setSampleModel(DualListModel<Sample> sampleModel)
+		{ this.sampleModel = sampleModel; }
+
+	public String getSampleGroupName()
+		{ return sampleGroupName; }
+
+	public void setSampleGroupName(String sampleGroupName)
+		{ this.sampleGroupName = sampleGroupName; }
 }

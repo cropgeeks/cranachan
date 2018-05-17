@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"
-	  xmlns="http://www.w3.org/1999/xhtml"
-	  xmlns:ui="http://java.sun.com/jsf/facelets"
-	  xmlns:h="http://java.sun.com/jsf/html"
-	  xmlns:f="http://java.sun.com/jsf/core"
-	  xmlns:c="http://java.sun.com/jsp/jstl/core"
-	  xmlns:jsf="http://xmlns.jcp.org/jsf"
-	  xmlns:p="http://primefaces.org/ui">
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
 
-  <head>
+<h:head>
 
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
@@ -21,34 +21,46 @@
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- Custom styles for this template -->
     <link href="vendor/bootstrap/css/style.css" rel="stylesheet"/>
+    <link href="vendor/jquery-ui/css/jquery-ui.min.css" rel="stylesheet"/>
+    <!-- Include the Material Design Icons -->
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/2.3.54/css/materialdesignicons.min.css"/>
+
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/jquery-ui/js/jquery-ui.min.js"></script>
 
     <!-- Custom styles for this template -->
     <style>
-      body {
-        padding-top: 54px;
-      }
-      @media (min-width: 992px) {
         body {
-          padding-top: 56px;
+            padding-top: 54px;
         }
-      }
+
+        @media (min-width: 992px) {
+            body {
+                padding-top: 56px;
+            }
+        }
+
+        .ui-picklist.ui-picklist-responsive .ui-picklist-list-wrapper {
+            width: 45%;
+        }
 
     </style>
 
-	 <!--<f:metadata>
-		  <f:viewParam name="datasetId" value="#{extractorManagedBean.dataset.id}" />
-	  </f:metadata>-->
+    <!--<f:metadata>
+         <f:viewParam name="datasetId" value="#{extractorManagedBean.dataset.id}" />
+     </f:metadata>-->
 
-  </head>
+</h:head>
 
-  <body>
+<body>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-      <div class="container">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
         <a class="navbar-brand" href="#">Cranachan</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
         <!--<div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
@@ -68,86 +80,126 @@
             </li>
           </ul>
         </div>-->
-      </div>
-    </nav>
-
-    <!-- Page Content -->
-    <div class="container">
-      <div class="row top-buffer">
-      	<div class="col-sm-6">
-      		<form jsf:id="form">
-      			<fieldset>
-      				<legend>Setup SNP extraction</legend>
-					<div class="form-group row">
-			        	<label class="col-sm-4 col-form-label" for="geneList">List of genes</label>
-			        	<div class="col-sm-8">
-							<h:inputTextarea id="geneList" row = "30" col = "10" class="form-control"/>
-				        </div>
-		        	</div>
-					<div class="form-group row">
-			        	<label class="col-sm-4 col-form-label" for="extendRegion">Extend region upstream/downstream by (kb)</label>
-			        	<div class="col-sm-8">
-							<h:inputText id="extendRegion" width = "30" class="form-control"/>
-				        </div>
-		        	</div>
-					<div class="form-group row">
-			        	<label class="col-sm-4 col-form-label" for="minQualScore">Include SNPs with quality scores above</label>
-			        	<div class="col-sm-8">
-							<h:inputText id="minQualScore" width = "30" class="form-control" value="20"/>
-				        </div>
-						Note: The overall quality score for a SNP is a a Phred-like score. A value of 20 corresponds to a 1 in 100 chance of the SNP call being wrong.
-						A value of 30 corresponds to a 1 in 1000 chance of the SNP call being wrong.
-		        	</div>
-					<div class="form-group row">
-			        	<label class="col-sm-4 col-form-label" for="sampleList">List of samples to include:</label>
-			        	<div class="col-sm-8">
-							<h:selectManyListbox id="sampleList" width = "30" size="8" class="form-control">
-								<c:forEach var="sample" items="#{extractorManagedBean.samples}">
-									<f:selectItem itemValue = "#{sample.name}" itemLabel = "#{sample.name}" />
-								</c:forEach>
-							</h:selectManyListbox>
-				        </div>
-		        	</div>
-			    		<div class="form-group row">
-			    			<div class="mx-auto col-sm-4">
-								<h:commandButton type="submit" class="form-control" value="Extract">
-									<p:fileDownload value="#{extractorManagedBean.file}" />
-								</h:commandButton>
-			    			</div>
-			    		</div>
-			    	</fieldset>
-		    	</form>
-	      </div>
-	      <div class="col-sm-6">
-	      	<table class="table table-striped table-bordered">
-	      		<thead>
-	      			<tr>
-	      				<th>Chromosome</th>
-	      				<th>Length</th>
-	      			</tr>
-	      		</thead>
-				<tbody>
-					<ui:repeat value="#{extractorManagedBean.reference.chromosomes}" var="chromosome">
-						<tr>
-							<td>#{chromosome.name}</td>
-							<td>
-								<h:outputText value="#{chromosome.length}">
-									<f:convertNumber pattern="#,###"/>
-								</h:outputText>
-							</td>
-						</tr>
-					</ui:repeat>
-				</tbody>
-	      	</table>
-	      </div>
-      </div>
     </div>
+</nav>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/popper/popper.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<!-- Page Content -->
+<div class="container">
+    <div class="row top-buffer">
+        <div class="col-sm-6">
+            <form jsf:id="form">
+                <fieldset>
+                    <legend>Setup SNP extraction</legend>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="geneList">List of genes</label>
+                        <div class="col-sm-8">
+                            <h:inputTextarea id="geneList" row="30" col="10" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="extendRegion">Extend region upstream/downstream by (kb)</label>
+                        <div class="col-sm-8">
+                            <h:inputText id="extendRegion" width="30" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="minQualScore">Include SNPs with quality scores above</label>
+                        <div class="col-sm-8">
+                            <h:inputText id="minQualScore" width="30" class="form-control" value="20"/>
+                        </div>
+                        Note: The overall quality score for a SNP is a a Phred-like score. A value of 20 corresponds to a 1 in 100 chance of the SNP
+                        call being wrong.
+                        A value of 30 corresponds to a 1 in 1000 chance of the SNP call being wrong.
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="sampleList">List of samples to include:</label>
+                        <div class="col-sm-8">
+                            <h:selectManyListbox id="sampleList" width="30" size="8" class="form-control">
+                                <c:forEach var="sample" items="#{extractorManagedBean.samples}">
+                                    <f:selectItem itemValue="#{sample.name}" itemLabel="#{sample.name}"/>
+                                </c:forEach>
+                            </h:selectManyListbox>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="mx-auto col-sm-4">
+                            <h:commandButton type="submit" class="btn btn-primary form-control" value="Extract">
+                                <p:fileDownload value="#{extractorManagedBean.file}"/>
+                            </h:commandButton>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <div class="row">
+                <div class="mx-auto col-sm-4">
+                    <button type="button" class="btn" onclick="showModal()">Create list</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Chromosome</th>
+                    <th>Length</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ui:repeat value="#{extractorManagedBean.reference.chromosomes}" var="chromosome">
+                    <tr>
+                        <td>#{chromosome.name}</td>
+                        <td>
+                            <h:outputText value="#{chromosome.length}">
+                                <f:convertNumber pattern="#,###"/>
+                            </h:outputText>
+                        </td>
+                    </tr>
+                </ui:repeat>
+                </tbody>
+            </table>
+        </div>
 
-  </body>
+        <div id="modal-sample-list" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <form jsf:id="listForm">
+                        <fieldset>
+                            <div class="modal-header">
+                                <h5 class="modal-title">Create sample list</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&#xd7;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <p:pickList id="PojoPickList" value="#{extractorManagedBean.sampleModel}" var="sample" itemValue="#{sample}"
+                                            itemLabel="#{sample.name}" responsive="true"
+                                            converter="sampleConverter">
+                                </p:pickList>
+                                <h:inputText id="listName" value="#{extractorManagedBean.sampleGroupName}" class="form-control" required="true" />
+                            </div>
+                            <div class="modal-footer">
+                                <h:commandButton class="btn btn-primary" action="#{extractorManagedBean.createList}" value="Create list"/>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+	function showModal() {
+		$('#modal-sample-list').modal('show');
+	}
+</script>
+
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/popper/popper.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+</body>
 
 </html>
