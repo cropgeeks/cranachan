@@ -117,7 +117,7 @@ public class BcfToolsView
 	private String createSamplesFile(String tmpDir)
 		throws IOException
 	{
-		File file = File.createTempFile("samples", "txt", new File(tmpDir));
+		File file = File.createTempFile("samples-", ".txt", new File(tmpDir));
 
 		BufferedWriter out = new BufferedWriter(new FileWriter(file));
 
