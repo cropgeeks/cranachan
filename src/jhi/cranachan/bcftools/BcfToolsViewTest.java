@@ -23,6 +23,7 @@ public class BcfToolsViewTest
 			.withOnlySNPs()
 			.withVCFOutput()
 			.withRegions(chromosome, start, end)
+			.withOnlySamples("ACUTE\tADONIS\tAGENDA")
 			.withOutputFile(vcfFile);
 
 		String path = "";

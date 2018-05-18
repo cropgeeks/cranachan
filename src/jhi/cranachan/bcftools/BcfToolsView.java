@@ -16,7 +16,7 @@ public class BcfToolsView
 	private static Logger LOG = Logger.getLogger(BcfToolsView.class.getName());
 
 	private File bcfFile;
-	private String outputType, outputFile, regions, types;
+	private String outputType, outputFile, regions, types, samples;
 
 	/**
 	 * Constructs a new BcfToolsView object that will run bcftools upon the
@@ -56,6 +56,16 @@ public class BcfToolsView
 		return this;
 	}
 
+	/**
+	 * Uses --samples-file
+	 * @param samples a tab-separated list of sample names
+	 */
+	public BcfToolsView withOnlySamples(String samples)
+	{
+		this.samples = samples;
+		return this;
+	}
+
 	public void run(String bcftools, String tmpDir)
 		throws Exception
 	{
@@ -67,6 +77,8 @@ public class BcfToolsView
 			args.add(types);
 		if (regions != null)
 			args.add(regions);
+		if (samples != null)
+			args.add("--samples-file=" + createSamplesFile(tmpDir));
 		if (outputType != null)
 			args.add(outputType);
 		if (outputFile != null)
@@ -100,5 +112,23 @@ public class BcfToolsView
 			Thread.sleep(500);
 
 		LOG.log(Level.INFO, "Process completed");
+	}
+
+	private String createSamplesFile(String tmpDir)
+		throws IOException
+	{
+		File file = File.createTempFile("samples", "txt", new File(tmpDir));
+
+		BufferedWriter out = new BufferedWriter(new FileWriter(file));
+
+		for (String name: samples.split("\t"))
+		{
+			out.write(name);
+			out.newLine();
+		}
+
+		out.close();
+
+		return file.getPath();
 	}
 }
