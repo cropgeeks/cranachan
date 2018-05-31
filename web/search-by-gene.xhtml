@@ -46,8 +46,18 @@
 <body>
 <ui:composition template="layout.xhtml">
     <ui:define name="main-content">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active">By gene</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="extractor.xhtml?datasetId=#{extractorManagedBean.dataset.id}">By position</a>
+                </li>
+            </ul>
+        </div>
         <div class="row top-buffer">
-            <div class="col-sm-6">
+            <div class="col-sm-9">
                 <form jsf:id="form">
                     <fieldset>
                         <legend>Setup SNP extraction</legend>
@@ -99,7 +109,7 @@
                 </form>
 
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
