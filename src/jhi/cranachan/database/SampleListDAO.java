@@ -8,13 +8,11 @@ import javax.enterprise.context.*;
 import javax.inject.*;
 import javax.sql.*;
 
-import jhi.cranachan.data.*;
-
 @Named
 @ApplicationScoped
 public class SampleListDAO
 {
-	private static final String INSERT_LIST = "INSERT INTO sample_lists (id, name, sample_list) VALUES (?, ?, ?)";
+	private static final String INSERT_LIST = "INSERT INTO sample_lists (id, name, dataset_id, sample_list) VALUES (?, ?, ?, ?)";
 
 	@Resource(name = "jdbc/cranachan")
 	private DataSource ds;
@@ -23,12 +21,12 @@ public class SampleListDAO
 	{
 	}
 
-	public String addList(String name, String list)
+	public String addList(String name, String datasetId, String list)
 	{
 		String uuid = UUID.randomUUID().toString();
 
 		try (Connection con = ds.getConnection();
-			 PreparedStatement stmt = DatabaseUtils.createInsertStatement(con, INSERT_LIST, uuid, name, list))
+			 PreparedStatement stmt = DatabaseUtils.createInsertStatement(con, INSERT_LIST, uuid, name, datasetId, list))
 		{
 			stmt.execute();
 		}

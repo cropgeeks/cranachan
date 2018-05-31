@@ -4,9 +4,9 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
->
+      xmlns:p="http://primefaces.org/ui">
 
-<head>
+<h:head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content=""/>
@@ -15,80 +15,42 @@
     <title>Cranachan</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     <!-- Custom styles for this template -->
-    <link href="vendor/bootstrap/css/style.css" rel="stylesheet"/>
-
-    <!-- Custom styles for this template -->
-    <style>
-        .card > a.btn {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
-
-        body {
-            padding-top: 54px;
-        }
-
-        @media (min-width: 992px) {
-            body {
-                padding-top: 56px;
-            }
-        }
-
-    </style>
-
-</head>
+    <link href="resources/bootstrap/css/style.css" rel="stylesheet"/>
+</h:head>
 
 <body>
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="/">Cranachan</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</nav>
-
-<!-- Page Content -->
-<div class="container">
-    <div class="row">
-        <ui:repeat value="#{datasetsManagedBean.datasets}" var="dataset">
-            <div class="col-lg-4 col-sm-6 portfolio-item top-buffer">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h4 class="card-title">
-                            #{dataset.description.project}
-                        </h4>
-                        <p class="card-text">
-                            <strong>Samples: </strong>
-                            <h:outputText value="#{dataset.description.samples}">
-                                <f:convertNumber groupingUsed="true"/>
-                            </h:outputText><br/>
-                            <strong>Markers: </strong>
-                            <h:outputText value="#{dataset.description.markers}">
-                                <f:convertNumber groupingUsed="true"/>
-                            </h:outputText><br/>
-                            <strong>Published?:</strong> #{dataset.description.publicationStatus}<br/>
-                            <strong>Data owner:</strong> #{dataset.description.dataOwner}<br/>
-                            <strong>Bioinformatics contact:</strong> #{dataset.description.bioinformaticsContact}
-                        </p>
+<ui:composition template="layout.xhtml">
+    <ui:define name="main-content">
+        <div class="row">
+            <ui:repeat value="#{datasetsManagedBean.datasets}" var="dataset">
+                <div class="col-lg-4 col-sm-6 portfolio-item top-buffer">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                #{dataset.description.project}
+                            </h4>
+                            <p class="card-text">
+                                <strong>Samples: </strong>
+                                <h:outputText value="#{dataset.description.samples}">
+                                    <f:convertNumber groupingUsed="true"/>
+                                </h:outputText><br/>
+                                <strong>Markers: </strong>
+                                <h:outputText value="#{dataset.description.markers}">
+                                    <f:convertNumber groupingUsed="true"/>
+                                </h:outputText><br/>
+                                <strong>Published?:</strong> #{dataset.description.publicationStatus}<br/>
+                                <strong>Data owner:</strong> #{dataset.description.dataOwner}<br/>
+                                <strong>Bioinformatics contact:</strong> #{dataset.description.bioinformaticsContact}
+                            </p>
+                        </div>
+                        <a href="search-by-gene.xhtml?datasetId=#{dataset.id}" class="btn btn-primary">Select dataset</a>
                     </div>
-                    <a href="search-by-gene.xhtml?datasetId=#{dataset.id}" class="btn btn-primary">Select dataset</a>
                 </div>
-            </div>
-        </ui:repeat>
-    </div>
-</div>
-
-<!-- Bootstrap core JavaScript -->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/popper/popper.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-
+            </ui:repeat>
+        </div>
+    </ui:define>
+</ui:composition>
 </body>
-
 </html>

@@ -18,17 +18,17 @@ import jhi.cranachan.database.*;
 @ViewScoped
 public class ExtractorManagedBean implements Serializable
 {
-	private Dataset   dataset;
+	private Dataset dataset;
 	private Reference reference;
 
 	private String selectedChromosome;
-	private long   extractStart;
-	private long   extractEnd;
+	private long extractStart;
+	private long extractEnd;
 
-	private List<Sample>          samples;
-	private List<Sample>          selectedSamples;
+	private List<Sample> samples;
+	private List<Sample> selectedSamples;
 	private DualListModel<Sample> sampleModel;
-	private String                sampleGroupName;
+	private String sampleGroupName;
 
 	private String tmpDir;
 	private String bcfToolsPath;
@@ -36,11 +36,11 @@ public class ExtractorManagedBean implements Serializable
 	private StreamedContent file;
 
 	@Inject
-	private DatasetDAO    datasetDAO;
+	private DatasetDAO datasetDAO;
 	@Inject
-	private ReferenceDAO  referenceDAO;
+	private ReferenceDAO referenceDAO;
 	@Inject
-	private SampleDAO     sampleDAO;
+	private SampleDAO sampleDAO;
 	@Inject
 	private SampleListDAO sampleListDAO;
 
@@ -51,18 +51,18 @@ public class ExtractorManagedBean implements Serializable
 	@PostConstruct
 	public void init()
 	{
-		FacesContext fc = FacesContext.getCurrentInstance();
-		Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 		String datasetId = params.get("datasetId");
 
-		tmpDir = fc.getExternalContext().getInitParameter("tmpDir");
-		bcfToolsPath = fc.getExternalContext().getInitParameter("bcfTools");
+		tmpDir = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("tmpDir");
+		bcfToolsPath = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("bcfTools");
 
 		dataset = datasetDAO.getById(datasetId);
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
 		samples = sampleDAO.getByDatasetId(datasetId);
-		selectedSamples = new ArrayList<>();
-		sampleModel = new DualListModel<>(samples, selectedSamples);
+		selectedSamples = new ArrayList<Sample>();
+		sampleModel = new DualListModel<Sample>(samples, selectedSamples);
+		sampleGroupName = "";
 	}
 
 	public StreamedContent getFile()
@@ -71,10 +71,10 @@ public class ExtractorManagedBean implements Serializable
 		try
 		{
 			BcfToolsView view = new BcfToolsView(new File(dataset.getFilepath()))
-					.withOnlySNPs()
-					.withVCFOutput()
-					.withRegions(selectedChromosome, extractStart, extractEnd)
-					.withOutputFile(output);
+				.withOnlySNPs()
+				.withVCFOutput()
+				.withRegions(selectedChromosome, extractStart, extractEnd)
+				.withOutputFile(output);
 
 			view.run("BCFTOOLS", tmpDir);
 
@@ -88,17 +88,15 @@ public class ExtractorManagedBean implements Serializable
 		return new DefaultStreamedContent();
 	}
 
-	public String createList()
+	public void processList()
 	{
 		List<Sample> selected = sampleModel.getTarget();
 
 		String value = selected.stream()
-							   .map(Sample::getName)
-							   .collect(Collectors.joining("\t"));
+		   .map(Sample::getName)
+		   .collect(Collectors.joining("\t"));
 
-		System.out.println(sampleListDAO.addList(sampleGroupName, value));
-
-		return "";
+		sampleListDAO.addList(sampleGroupName, ""+dataset.getId(), value);
 	}
 
 	public Dataset getDataset()

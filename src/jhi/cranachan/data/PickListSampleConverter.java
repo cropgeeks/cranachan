@@ -34,6 +34,9 @@ public class PickListSampleConverter implements Converter
 	@Override
 	public String getAsString(FacesContext fc, UIComponent comp, Object value)
 	{
-		return ((Sample) value).getName();
+		if (value != null)
+			return ((Sample) value).getName();
+
+		return null;
 	}
 }
