@@ -1,27 +1,8 @@
-<!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
-
-<h:head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
-
-    <title>Cranachan</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-    <!-- Custom styles for this template -->
-    <link href="resources/bootstrap/css/style.css" rel="stylesheet"/>
-</h:head>
-
-<body>
-<ui:composition template="layout.xhtml">
+<ui:composition template="layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core">
     <ui:define name="main-content">
         <div class="row">
             <ui:repeat value="#{datasetsManagedBean.datasets}" var="dataset">
@@ -52,5 +33,3 @@
         </div>
     </ui:define>
 </ui:composition>
-</body>
-</html>
