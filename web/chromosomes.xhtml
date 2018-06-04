@@ -1,0 +1,28 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core">
+    <div class="col-sm-3">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Chromosome</th>
+                <th>Length</th>
+            </tr>
+            </thead>
+            <tbody>
+            <ui:repeat value="#{extractorManagedBean.reference.chromosomes}" var="chromosome">
+                <tr>
+                    <td>#{chromosome.name}</td>
+                    <td>
+                        <h:outputText value="#{chromosome.length}">
+                            <f:convertNumber pattern="#,###"/>
+                        </h:outputText>
+                    </td>
+                </tr>
+            </ui:repeat>
+            </tbody>
+        </table>
+    </div>
+</ui:composition>
