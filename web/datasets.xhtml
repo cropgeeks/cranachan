@@ -13,6 +13,7 @@
                                 #{dataset.description.project}
                             </h4>
                             <p class="card-text">
+                                <strong>Description:</strong> #{dataset.description.description}<br/>
                                 <strong>Samples: </strong>
                                 <h:outputText value="#{dataset.description.samples}">
                                     <f:convertNumber groupingUsed="true"/>
@@ -22,7 +23,7 @@
                                     <f:convertNumber groupingUsed="true"/>
                                 </h:outputText><br/>
                                 <strong>Published?:</strong> #{dataset.description.publicationStatus}<br/>
-                                <strong>Data owner:</strong> #{dataset.description.dataOwner}<br/>
+                                <strong>Data owner:</strong> #{dataset.description.dataOwnerString()}<br/>
                                 <strong>Bioinformatics contact:</strong> #{dataset.description.bioinformaticsContact}
                             </p>
                         </div>

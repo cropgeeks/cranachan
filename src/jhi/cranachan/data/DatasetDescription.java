@@ -1,6 +1,7 @@
 package jhi.cranachan.data;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class DatasetDescription
 {
@@ -10,9 +11,15 @@ public class DatasetDescription
 	private List<String> dataOwner;
 	private String publicationStatus;
 	private String bioinformaticsContact;
+	private String description;
 
 	public DatasetDescription()
 	{
+	}
+
+	public String dataOwnerString()
+	{
+		return dataOwner.stream().collect(Collectors.joining(", "));
 	}
 
 	public long getMarkers()
@@ -50,4 +57,10 @@ public class DatasetDescription
 
 	public void setBioinformaticsContact(String bioinformaticsContact)
 		{ this.bioinformaticsContact = bioinformaticsContact; }
+
+	public String getDescription()
+		{ return description; }
+
+	public void setDescription(String description)
+		{ this.description = description; }
 }
