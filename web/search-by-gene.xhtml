@@ -19,25 +19,27 @@
         </div>
         <div class="row top-buffer">
             <div class="col-sm-9">
-                <form jsf:id="form">
+                <form action="results.xhtml" method="post">
                     <fieldset>
+                        <input type="hidden" jsf:id="by-gene"/>
+                        <input type="hidden" jsf:id="datasetId" value="#{extractorManagedBean.dataset.id}"/>
                         <legend>Setup SNP extraction</legend>
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="geneList">List of genes</label>
                             <div class="col-sm-8">
-                                <h:inputTextarea id="geneList" row="30" col="10" class="form-control"/>
+                                <textarea jsf:id="geneList" class="form-control"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="extendRegion">Extend region upstream/downstream by (kb)</label>
                             <div class="col-sm-8">
-                                <h:inputText id="extendRegion" width="30" class="form-control"/>
+                                <input type="text" jsf:id="extendRegion" width="30" class="form-control"/>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="minQualScore">Include SNPs with quality scores above</label>
                             <div class="col-sm-8">
-                                <h:inputText id="minQualScore" width="30" class="form-control" value="20"/>
+                                <input type="text" jsf:id="minQualScore" width="30" class="form-control" value="20"/>
                             </div>
                             <div class="col-sm-12">
                                 <p>Note: The overall quality score for a SNP is a a Phred-like score. A value of 20 corresponds to a 1 in 100 chance of the SNP
@@ -45,25 +47,8 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="sampleList">List of samples to include:</label>
-                            <div class="col-sm-8">
-                                <h:selectManyListbox id="sampleList" width="30" size="8" class="form-control">
-                                    <c:forEach var="sample" items="#{extractorManagedBean.samples}">
-                                        <f:selectItem itemValue="#{sample.name}" itemLabel="#{sample.name}"/>
-                                    </c:forEach>
-                                </h:selectManyListbox>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <div class="mx-auto col-sm-4">
-                                <h:commandButton type="submit" class="btn btn-primary form-control" value="Extract">
-                                    <p:fileDownload value="#{extractorManagedBean.file}"/>
-                                </h:commandButton>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="mx-auto col-sm-4">
-                                <button type="button" class="btn" data-toggle="modal" data-target="#modal-sample-list">Create list</button>
+                                <input type="submit" value="Extract"/>
                             </div>
                         </div>
                     </fieldset>
@@ -72,32 +57,6 @@
             </div>
             <div class="col-sm-3">
                 <ui:include src="chromosomes.xhtml" />
-            </div>
-        </div>
-
-        <div id="modal-sample-list" class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Create sample list</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"/>
-                    </div>
-                    <form jsf:id="listForm">
-                        <div class="modal-body">
-                            <p:pickList id="pojoPickList" value="#{extractorManagedBean.sampleModel}" var="sample" itemValue="#{sample}"
-                                        itemLabel="#{sample.name}" responsive="true" converter="sampleConverter">
-                            </p:pickList>
-                            <h:inputText id="listName" value="#{extractorManagedBean.sampleGroupName}" class="form-control" required="true" />
-                        </div>
-                        <div class="modal-footer">
-
-                            <h:commandButton class="btn btn-primary" action="#{extractorManagedBean.processList}" value="Create list" onclick="$('#modal-sample-list').modal('hide')">
-                                <f:ajax execute="pojoPickList listName"/>
-                            </h:commandButton>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
-                </div>
             </div>
         </div>
     </ui:define>

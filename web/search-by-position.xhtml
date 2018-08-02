@@ -18,13 +18,15 @@
         </div>
 		<div class="row top-buffer">
 			<div class="col-sm-9">
-				<form jsf:id="form">
+				<form action="results.xhtml" method="post">
 					<fieldset>
+						<input type="hidden" jsf:id="by-position"/>
+						<input type="hidden" jsf:id="datasetId" value="#{extractorManagedBean.dataset.id}"/>
 						<legend>Setup extraction</legend>
 						<div class="form-group row">
-							<label class="col-sm-4 col-form-label" for="select">Pick chromosome</label>
+							<label class="col-sm-4 col-form-label" for="chr">Pick chromosome</label>
 							<div class="col-sm-8">
-								<h:selectOneMenu id="select" name="chromosome" value="#{extractorManagedBean.selectedChromosome}" class="form-control">
+								<h:selectOneMenu id="chr" name="chromosome" value="#{extractorManagedBean.selectedChromosome}" class="form-control">
 									<f:selectItems value="#{extractorManagedBean.reference.chromosomes}" var="chromosome" itemValue="#{chromosome.name}" itemLabel="#{chromosome.name}"/>
 								</h:selectOneMenu>
 							</div>
@@ -32,20 +34,18 @@
 						<div class="form-group row">
 							<label class="col-sm-4 col-form-label" for="start">Start</label>
 							<div class="col-sm-8">
-								<input class="form-control" type="text" name="start" id="start" placeholder="1" jsf:value="#{extractorManagedBean.extractStart}"/>
+								<input class="form-control" type="text" jsf:id="start" placeholder="1" value="#{extractorManagedBean.extractStart}"/>
 							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-4 col-form-label" for="end">End</label>
 							<div class="col-sm-8">
-								<input class="form-control" type="text" name="end" id="end" placeholder="300000" jsf:value="#{extractorManagedBean.extractEnd}"/>
+								<input class="form-control" type="text" jsf:id="end" placeholder="300000" value="#{extractorManagedBean.extractEnd}"/>
 							</div>
 						</div>
 						<div class="form-group row">
 							<div class="mx-auto col-sm-4">
-								<h:commandButton type="submit" class="form-control" value="Extract">
-									<p:fileDownload value="#{extractorManagedBean.file}" />
-								</h:commandButton>
+								<input type="submit" value="Extract"/>
 							</div>
 						</div>
 					</fieldset>

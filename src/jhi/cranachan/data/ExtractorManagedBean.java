@@ -1,18 +1,16 @@
 package jhi.cranachan.data;
 
-import org.primefaces.model.*;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
-
 import javax.annotation.*;
 import javax.faces.context.*;
 import javax.faces.view.*;
 import javax.inject.*;
 
-import jhi.cranachan.bcftools.*;
 import jhi.cranachan.database.*;
+
+import org.primefaces.model.*;
 
 @Named
 @ViewScoped
@@ -29,11 +27,6 @@ public class ExtractorManagedBean implements Serializable
 	private List<Sample> selectedSamples;
 	private DualListModel<Sample> sampleModel;
 	private String sampleGroupName;
-
-	private String tmpDir;
-	private String bcfToolsPath;
-
-	private StreamedContent file;
 
 	@Inject
 	private DatasetDAO datasetDAO;
@@ -54,38 +47,12 @@ public class ExtractorManagedBean implements Serializable
 		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 		String datasetId = params.get("datasetId");
 
-		tmpDir = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("tmpDir");
-		bcfToolsPath = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("bcfTools");
-
 		dataset = datasetDAO.getById(datasetId);
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
 		samples = sampleDAO.getByDatasetId(datasetId);
 		selectedSamples = new ArrayList<Sample>();
 		sampleModel = new DualListModel<Sample>(samples, selectedSamples);
 		sampleGroupName = "";
-	}
-
-	public StreamedContent getFile()
-	{
-		File output = new File(tmpDir, dataset.getName() + "-" + System.currentTimeMillis() + ".vcf");
-		try
-		{
-			BcfToolsView view = new BcfToolsView(new File(dataset.getFilepath()))
-				.withOnlySNPs()
-				.withVCFOutput()
-				.withRegions(selectedChromosome, extractStart, extractEnd)
-				.withOutputFile(output);
-
-			view.run("BCFTOOLS", tmpDir);
-
-			return new DefaultStreamedContent(new FileInputStream(output), "text/plain", output.getName());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		return new DefaultStreamedContent();
 	}
 
 	public void processList()
