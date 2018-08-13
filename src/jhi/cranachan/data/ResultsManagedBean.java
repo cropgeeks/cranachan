@@ -29,6 +29,7 @@ public class ResultsManagedBean implements Serializable
 
 	// Location for storing files created by this class
 	private String tmpDir;
+	private File outputDir;
 
 	private List<File> mapFiles = new ArrayList<>();
 	private List<File> genotypeFiles = new ArrayList<>();
@@ -46,6 +47,8 @@ public class ResultsManagedBean implements Serializable
 	{
 		// Grab the location of the temp folder so that we can write generated files to that location
 		tmpDir = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("tmpDir");
+		outputDir = new File(tmpDir + "/" + System.currentTimeMillis());
+		outputDir.mkdir();
 
 		// Grab the request parameters map. This should let us get at parameters which have been posted to the results page
 		Map<String,String> requestParams = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -91,11 +94,11 @@ public class ResultsManagedBean implements Serializable
 			projectFileCreated = true;
 
 			String mapFileName = changeFileExtension(file.getName(), ".map");
-			File mapFile = new File(tmpDir, mapFileName);
+			File mapFile = new File(outputDir, mapFileName);
 			mapFiles.add(mapFile);
 
 			String genotypeFileName = changeFileExtension(file.getName(), ".dat");
-			File genotypeFile = new File(tmpDir, genotypeFileName);
+			File genotypeFile = new File(outputDir, genotypeFileName);
 			genotypeFiles.add(genotypeFile);
 
 			VcfToFJTabbedConverter vcfConverter = new VcfToFJTabbedConverter(file, mapFile, genotypeFile);
@@ -110,7 +113,7 @@ public class ResultsManagedBean implements Serializable
 			{
 				FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, projectFile)
 					.withMapFile(mapFile);
-				createProject.run(flapjackPath, tmpDir);
+				createProject.run(flapjackPath, outputDir.getAbsolutePath());
 			}
 			catch (Exception e)
 			{
@@ -153,7 +156,7 @@ public class ResultsManagedBean implements Serializable
 
 	private File runBcfToolsView(String name, Dataset dataset, String chromosomeName, long start, long end)
 	{
-		File output = new File(tmpDir, name + "-" + System.currentTimeMillis() + ".vcf");
+		File output = new File(outputDir, name + ".vcf");
 		try
 		{
 			BcfToolsView view = new BcfToolsView(new File(dataset.getFilepath()))
@@ -162,7 +165,7 @@ public class ResultsManagedBean implements Serializable
 				.withRegions(chromosomeName, start, end)
 				.withOutputFile(output);
 
-			view.run("BCFTOOLS", tmpDir);
+			view.run("BCFTOOLS", outputDir.getAbsolutePath());
 		}
 		catch (Exception e)
 		{
@@ -174,13 +177,13 @@ public class ResultsManagedBean implements Serializable
 
 	private File runBcfToolsStats(String name, File vcfFile)
 	{
-		File output = new File(tmpDir, name + ".stats");
+		File output = new File(outputDir, name + ".stats");
 		try
 		{
 			BcfToolsStats stats = new BcfToolsStats(vcfFile)
 				.withOutputFile(output);
 
-			stats.run("BCFTOOLS", tmpDir);
+			stats.run("BCFTOOLS", outputDir.getAbsolutePath());
 		}
 		catch (Exception e)
 		{

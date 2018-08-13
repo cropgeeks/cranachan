@@ -61,10 +61,15 @@
         <ui:fragment rendered="#{resultsManagedBean.projectFileCreated}">
             <div class="row">
                 <form jsf:id="project-form" jsf:prependId="false">
-                    <div class="col-sm-4">
-                        <p:commandButton type="submit" value="#{resultsManagedBean.projectFile.name}" ajax="false">
-                            <p:fileDownload value="#{resultsManagedBean.downloadProject()}"/>
-                        </p:commandButton>
+                    <div class="row">
+                        <div class="col-8">
+                            <label class="col-form-label" for="download">Flapjack project file: #{resultsManagedBean.projectFile.name}</label>
+                        </div>
+                        <div class="col-4">
+                            <p:commandButton class="btn btn-primary" type="submit" id="download" value="Download" ajax="false">
+                                <p:fileDownload value="#{resultsManagedBean.downloadProject()}"/>
+                            </p:commandButton>
+                        </div>
                     </div>
                 </form>
             </div>
