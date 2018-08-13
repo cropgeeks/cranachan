@@ -21,23 +21,20 @@ public class GeneDAO
 		" LEFT JOIN genes ON genes.id = genes_to_refseqs.gene_id" +
 		" WHERE genes.name = ? AND datasets.id = ?";
 
+	private static final String GENES_BY_POSITION_AND_DATASET_ID = "SELECT refseqs.*, genes.name, " +
+		" genes_to_refseqs.position_start, genes_to_refseqs.position_end FROM datasets LEFT JOIN refseqsets " +
+		" ON refseqsets.id = datasets.refseqset_id " +
+		" LEFT JOIN refseqs ON refseqs.refseqset_id = refseqsets.id " +
+		" LEFT JOIN genes_to_refseqs ON genes_to_refseqs.refseq_id = refseqs.id " +
+		" LEFT JOIN genes ON genes.id = genes_to_refseqs.gene_id " +
+		" WHERE refseqs.name = ? AND genes_to_refseqs.position_end >= ? " +
+		" AND genes_to_refseqs.position_start <= ? AND datasets.id = ?";
+
 	@Resource(name = "jdbc/cranachan")
 	private DataSource ds;
 
 	public GeneDAO()
 	{
-	}
-
-
-	public static PreparedStatement genePreparedStatement(Connection con, String query, String id, String geneName)
-		throws SQLException
-	{
-		// Prepare statement with ID
-		PreparedStatement statement = con.prepareStatement(query);
-		statement.setString(1, geneName);
-		statement.setString(2, id);
-
-		return statement;
 	}
 
 	public List<Gene> getByNameAndDatasetId(String name, String datasetId)
@@ -60,6 +57,53 @@ public class GeneDAO
 		}
 
 		return genes;
+	}
+
+	private PreparedStatement genePreparedStatement(Connection con, String query, String id, String geneName)
+		throws SQLException
+	{
+		// Prepare statement with ID
+		PreparedStatement statement = con.prepareStatement(query);
+		statement.setString(1, geneName);
+		statement.setString(2, id);
+
+		return statement;
+	}
+
+
+	public List<Gene> getByPositionAndDatasetId(String chromosome, long start, long end, String datasetId)
+	{
+		List<Gene> genes = new ArrayList<>();
+
+		try (Connection con = ds.getConnection();
+			 PreparedStatement stmt = positionPreparedStatement(con, GENES_BY_POSITION_AND_DATASET_ID, chromosome, start, end, datasetId);
+			 ResultSet resultSet = stmt.executeQuery())
+		{
+			while (resultSet.next())
+			{
+				Gene gene = getGene(resultSet);
+				genes.add(gene);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return genes;
+	}
+
+	private PreparedStatement positionPreparedStatement(Connection con, String query, String chromosome, long start, long end, String datasetId)
+		throws SQLException
+	{
+		// Prepare statement with ID
+		PreparedStatement statement = con.prepareStatement(query);
+		statement.setString(1, chromosome);
+		statement.setLong(2, start);
+		statement.setLong(3, end);
+		statement.setString(4, datasetId);
+
+		return statement;
 	}
 
 	private Gene getGene(ResultSet resultSet)

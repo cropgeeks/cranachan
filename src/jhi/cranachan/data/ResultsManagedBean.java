@@ -30,9 +30,11 @@ public class ResultsManagedBean implements Serializable
 	// Location for storing files created by this class
 	private String tmpDir;
 	private File outputDir;
+	private File projectOutputDir;
 
 	private List<File> mapFiles = new ArrayList<>();
 	private List<File> genotypeFiles = new ArrayList<>();
+	private List<File> qtlFiles = new ArrayList<>();
 	private File projectFile;
 
 	private boolean projectFileCreated = false;
@@ -47,8 +49,11 @@ public class ResultsManagedBean implements Serializable
 	{
 		// Grab the location of the temp folder so that we can write generated files to that location
 		tmpDir = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("tmpDir");
-		outputDir = new File(tmpDir + "/" + System.currentTimeMillis());
+		long currentTime = System.currentTimeMillis();
+		outputDir = new File(tmpDir + "/" + currentTime);
 		outputDir.mkdir();
+		projectOutputDir = new File("/tmp" + "/" + currentTime);
+		projectOutputDir.mkdir();
 
 		// Grab the request parameters map. This should let us get at parameters which have been posted to the results page
 		Map<String,String> requestParams = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -104,15 +109,22 @@ public class ResultsManagedBean implements Serializable
 			VcfToFJTabbedConverter vcfConverter = new VcfToFJTabbedConverter(file, mapFile, genotypeFile);
 			vcfConverter.convert();
 
+			String qtlFileName = changeFileExtension(file.getName(), ".qtl");
+			File qtlFile = new File(outputDir, qtlFileName);
+			qtlFiles.add(qtlFile);
+			List<Gene> genes = geneDAO.getByPositionAndDatasetId(chromosome, start, end, datasetId);
+			writeQtlFile(qtlFile, genes);
+
 			String projectFileName = changeFileExtension(file.getName(), ".flapjack");
-			projectFile = new File("/tmp", projectFileName);
+			projectFile = new File(projectOutputDir, projectFileName);
 
 			String flapjackPath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/lib/flapjack.jar");
 
 			try
 			{
 				FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, projectFile)
-					.withMapFile(mapFile);
+					.withMapFile(mapFile)
+					.withQtlFile(qtlFile);
 				createProject.run(flapjackPath, outputDir.getAbsolutePath());
 			}
 			catch (Exception e)
@@ -127,6 +139,7 @@ public class ResultsManagedBean implements Serializable
 		// Retrieve parameters from the request map which have been posted to the results page
 		String geneList = requestParams.get("geneList");
 		int extendRegion = Integer.parseInt(requestParams.get("extendRegion"));
+		extendRegion *= 1000;
 		// TODO: our bcftools code does not currently allow us to specify a quality score filter
 		int minQualScore = Integer.parseInt(requestParams.get("minQualScore"));
 		String datasetId = requestParams.get("datasetId");
@@ -139,7 +152,7 @@ public class ResultsManagedBean implements Serializable
 
 		String name = String.join("-", geneNames);
 		String projectFileName = name + ".flapjack";
-		projectFile = new File("/tmp", projectFileName);
+		projectFile = new File(projectOutputDir, projectFileName);
 
 		// Iterate over the gene names provided by the user and retrieve those that we can find from the database
 		for(String geneName : geneNames)
@@ -173,12 +186,19 @@ public class ResultsManagedBean implements Serializable
 					VcfToFJTabbedConverter vcfConverter = new VcfToFJTabbedConverter(file, mapFile, genotypeFile);
 					vcfConverter.convert();
 
+					String qtlFileName = changeFileExtension(file.getName(), ".qtl");
+					File qtlFile = new File(outputDir, qtlFileName);
+					qtlFiles.add(qtlFile);
+					List<Gene> foundGenes = geneDAO.getByPositionAndDatasetId(gene.getChromosome(), gene.getStart()-extendRegion, gene.getEnd()+extendRegion, datasetId);
+					writeQtlFile(qtlFile, foundGenes);
+
 					String flapjackPath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/lib/flapjack.jar");
 
 					try
 					{
 						FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, projectFile)
-							.withMapFile(mapFile);
+							.withMapFile(mapFile)
+							.withQtlFile(qtlFile);
 						createProject.run(flapjackPath, outputDir.getAbsolutePath());
 					}
 					catch (Exception e)
@@ -256,6 +276,27 @@ public class ResultsManagedBean implements Serializable
 		}
 
 		return snpCount;
+	}
+
+	private void writeQtlFile(File file, List<Gene> genes)
+	{
+		if (!genes.isEmpty())
+		{
+			try(PrintWriter writer = new PrintWriter(new FileWriter(file)))
+			{
+				writer.println("# fjFile = QTL");
+				writer.println("Name\tChromosome\tPosition\tPos-Min\tPos-Max\tTrait\tExperiment");
+				for (Gene gene : genes)
+				{
+					long pos = gene.getStart() + ((gene.getEnd()-gene.getStart()) / 2);
+					writer.println(gene.getName()+ "\t" + gene.getChromosome() + "\t" + pos + "\t" + gene.getStart() + "\t" + gene.getEnd() + "\t" + "Trait\tExperiment");
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private String changeFileExtension(String filename, String extension)

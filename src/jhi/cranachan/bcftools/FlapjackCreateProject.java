@@ -11,6 +11,7 @@ public class FlapjackCreateProject
 	private File genotypeFile;
 	private File mapFile;
 	private File projectFile;
+	private File qtlFile;
 
 	public FlapjackCreateProject(File genotypeFile, File projectFile)
 	{
@@ -21,6 +22,14 @@ public class FlapjackCreateProject
 	public FlapjackCreateProject withMapFile(File mapFile)
 	{
 		this.mapFile = mapFile;
+
+		return this;
+	}
+
+	public FlapjackCreateProject withQtlFile(File qtlFile)
+	{
+		if (qtlFile != null && qtlFile.exists())
+			this.qtlFile = qtlFile;
 
 		return this;
 	}
@@ -45,6 +54,11 @@ public class FlapjackCreateProject
 		{
 			args.add("-m");
 			args.add(mapFile.getPath());
+		}
+		if (qtlFile != null)
+		{
+			args.add("-q");
+			args.add(qtlFile.getPath());
 		}
 
 		ProcessBuilder pb = new ProcessBuilder(args);
