@@ -17,7 +17,9 @@
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Gene</th>
+                        <ui:fragment rendered="#{resultsManagedBean.byPosition == false}">
+                            <th>Gene</th>
+                        </ui:fragment>
                         <th>Chromosome</th>
                         <th>Start</th>
                         <th>Stop</th>
@@ -28,7 +30,9 @@
                 <tbody>
                     <ui:repeat value="#{resultsManagedBean.tableRows}" var="row">
                         <tr>
-                            <td>#{row.gene}</td>
+                            <ui:fragment rendered="#{resultsManagedBean.byPosition == false}">
+                                <td>#{row.gene}</td>
+                            </ui:fragment>
                             <td>#{row.chromosome}</td>
                             <td>
                                 <h:outputText value="#{row.start}">
@@ -53,6 +57,18 @@
             </table>
             </form>
         </div>
+
+        <ui:fragment rendered="#{resultsManagedBean.projectFileCreated}">
+            <div class="row">
+                <form jsf:id="project-form" jsf:prependId="false">
+                    <div class="col-sm-4">
+                        <p:commandButton type="submit" value="#{resultsManagedBean.projectFile.name}" ajax="false">
+                            <p:fileDownload value="#{resultsManagedBean.downloadProject()}"/>
+                        </p:commandButton>
+                    </div>
+                </form>
+            </div>
+        </ui:fragment>
 
     </ui:define>
 </ui:composition>
