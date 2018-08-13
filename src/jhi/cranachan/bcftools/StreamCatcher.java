@@ -7,11 +7,11 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 
-abstract class StreamCatcher extends Thread
+public abstract class StreamCatcher extends Thread
 {
 	private Logger LOG = Logger.getLogger(StreamCatcher.class.getName());
 
-	private BufferedReader reader = null;
+	protected BufferedReader reader = null;
 
 	public StreamCatcher(InputStream in)
 	{

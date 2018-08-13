@@ -6,11 +6,11 @@ package jhi.cranachan.bcftools;
 import java.io.*;
 import java.util.logging.*;
 
-class StreamCatcherLogger extends StreamCatcher
+public class StreamCatcherLogger extends StreamCatcher
 {
 	private static Logger LOG = Logger.getLogger(StreamCatcherLogger.class.getName());
 
-	StreamCatcherLogger(InputStream in)
+	public StreamCatcherLogger(InputStream in)
 		throws IOException
 	{
 		super(in);

@@ -42,7 +42,12 @@
 			<classes dir="${cls}"/>
 			<lib dir="${lib}">
 				<exclude name="**/lib-devel/**"/>
+				<exclude name="**/flapjack/**"/>
 			</lib>
+			<mappedresources>
+				<fileset dir="${lib}"/>
+				<globmapper from="flapjack/*.jar" to="WEB-INF/lib/*.jar"/>
+			</mappedresources>
 		</war>
 
 		<taskdef name="undeploy" classpathref="project.classpath"
