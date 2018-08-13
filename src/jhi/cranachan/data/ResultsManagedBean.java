@@ -137,10 +137,14 @@ public class ResultsManagedBean implements Serializable
 		// Split the geneList by newlines (and remove any blank lines
 		String[] geneNames = geneList.split("[\\r\\n]+");
 
+		String name = String.join("-", geneNames);
+		String projectFileName = name + ".flapjack";
+		projectFile = new File("/tmp", projectFileName);
+
 		// Iterate over the gene names provided by the user and retrieve those that we can find from the database
-		for(String name : geneNames)
+		for(String geneName : geneNames)
 		{
-			List<Gene> genes = geneDAO.getByNameAndDatasetId(name, datasetId);
+			List<Gene> genes = geneDAO.getByNameAndDatasetId(geneName, datasetId);
 
 			// For each gene retrieved from the database, run bcftools and add the results to the list which we will use
 			// in the JSF page to generate the table
@@ -148,8 +152,40 @@ public class ResultsManagedBean implements Serializable
 			{
 				File file = runBcfToolsView(gene.getName(), dataset, gene.getChromosome(), gene.getStart()-extendRegion, gene.getEnd()+extendRegion);
 
-				GeneTableRow row = new GeneTableRow(gene.getName(), gene.getChromosome(), gene.getStart(), gene.getEnd(), 0, file);
+				File stats = runBcfToolsStats(file.getName(), file);
+				long snpCount = getSnpCount(stats);
+
+				GeneTableRow row = new GeneTableRow(gene.getName(), gene.getChromosome(), gene.getStart(), gene.getEnd(), snpCount, file);
 				tableRows.add(row);
+
+				if (snpCount > 0)
+				{
+					projectFileCreated = true;
+
+					String mapFileName = changeFileExtension(file.getName(), ".map");
+					File mapFile = new File(outputDir, mapFileName);
+					mapFiles.add(mapFile);
+
+					String genotypeFileName = changeFileExtension(file.getName(), ".dat");
+					File genotypeFile = new File(outputDir, genotypeFileName);
+					genotypeFiles.add(genotypeFile);
+
+					VcfToFJTabbedConverter vcfConverter = new VcfToFJTabbedConverter(file, mapFile, genotypeFile);
+					vcfConverter.convert();
+
+					String flapjackPath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/WEB-INF/lib/flapjack.jar");
+
+					try
+					{
+						FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, projectFile)
+							.withMapFile(mapFile);
+						createProject.run(flapjackPath, outputDir.getAbsolutePath());
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
