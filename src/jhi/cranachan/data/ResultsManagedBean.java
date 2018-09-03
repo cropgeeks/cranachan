@@ -1,9 +1,11 @@
 package jhi.cranachan.data;
 
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import javax.annotation.*;
 import javax.faces.context.*;
+import javax.faces.event.*;
 import javax.faces.view.*;
 import javax.inject.*;
 
@@ -31,6 +33,7 @@ public class ResultsManagedBean implements Serializable
 	private String tmpDir;
 	private File outputDir;
 	private File projectOutputDir;
+	private File genotypeOutputDir;
 
 	private List<File> mapFiles = new ArrayList<>();
 	private List<File> genotypeFiles = new ArrayList<>();
@@ -39,6 +42,9 @@ public class ResultsManagedBean implements Serializable
 
 	private boolean projectFileCreated = false;
 	private boolean byPosition = false;
+	private File genoPreview;
+
+	private String tomcatRoot;
 
 	public ResultsManagedBean()
 	{
@@ -49,11 +55,15 @@ public class ResultsManagedBean implements Serializable
 	{
 		// Grab the location of the temp folder so that we can write generated files to that location
 		tmpDir = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("tmpDir");
+		tomcatRoot = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
 		long currentTime = System.currentTimeMillis();
 		outputDir = new File(tmpDir + "/" + currentTime);
 		outputDir.mkdir();
 		projectOutputDir = new File("/tmp" + "/" + currentTime);
 		projectOutputDir.mkdir();
+		genotypeOutputDir = new File(tomcatRoot + "/downloads/" + currentTime);
+		genotypeOutputDir.mkdir();
+
 
 		// Grab the request parameters map. This should let us get at parameters which have been posted to the results page
 		Map<String,String> requestParams = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -104,10 +114,20 @@ public class ResultsManagedBean implements Serializable
 
 			String genotypeFileName = changeFileExtension(file.getName(), ".dat");
 			File genotypeFile = new File(outputDir, genotypeFileName);
-			genotypeFiles.add(genotypeFile);
 
 			VcfToFJTabbedConverter vcfConverter = new VcfToFJTabbedConverter(file, mapFile, genotypeFile);
 			vcfConverter.convert();
+
+			try
+			{
+				Path path = Files.copy(genotypeFile.toPath(), new File(genotypeOutputDir, genotypeFile.getName()).toPath());
+				System.out.println(path);
+				genotypeFiles.add(path.toFile());
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 
 			String qtlFileName = changeFileExtension(file.getName(), ".qtl");
 			File qtlFile = new File(outputDir, qtlFileName);
@@ -132,6 +152,9 @@ public class ResultsManagedBean implements Serializable
 				e.printStackTrace();
 			}
 		}
+
+		if (genotypeFiles.size() > 0)
+			genoPreview = genotypeFiles.get(0);
 	}
 
 	private void createByGeneRows(Map<String, String> requestParams)
@@ -181,10 +204,20 @@ public class ResultsManagedBean implements Serializable
 
 					String genotypeFileName = changeFileExtension(file.getName(), ".dat");
 					File genotypeFile = new File(outputDir, genotypeFileName);
-					genotypeFiles.add(genotypeFile);
 
 					VcfToFJTabbedConverter vcfConverter = new VcfToFJTabbedConverter(file, mapFile, genotypeFile);
 					vcfConverter.convert();
+
+					try
+					{
+						Path path = Files.copy(genotypeFile.toPath(), new File(genotypeOutputDir, genotypeFile.getName()).toPath());
+						System.out.println(path);
+						genotypeFiles.add(path.toFile());
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 
 					String qtlFileName = changeFileExtension(file.getName(), ".qtl");
 					File qtlFile = new File(outputDir, qtlFileName);
@@ -198,7 +231,8 @@ public class ResultsManagedBean implements Serializable
 					{
 						FlapjackCreateProject createProject = new FlapjackCreateProject(genotypeFile, projectFile)
 							.withMapFile(mapFile)
-							.withQtlFile(qtlFile);
+							.withQtlFile(qtlFile)
+							.withDatasetName(gene.getName());
 						createProject.run(flapjackPath, outputDir.getAbsolutePath());
 					}
 					catch (Exception e)
@@ -208,6 +242,9 @@ public class ResultsManagedBean implements Serializable
 				}
 			}
 		}
+
+		if (genotypeFiles.size() > 0)
+			genoPreview = genotypeFiles.get(0);
 	}
 
 	private File runBcfToolsView(String name, Dataset dataset, String chromosomeName, long start, long end)
@@ -314,6 +351,18 @@ public class ResultsManagedBean implements Serializable
 		return new DefaultStreamedContent(new FileInputStream(projectFile), "application/octet-stream", projectFile.getName());
 	}
 
+	public void processValueChange(AjaxBehaviorEvent event)
+	{
+		System.out.println(genoPreview.toString());
+	}
+
+	public String getPathToGenotypeFile()
+	{
+		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+
+		return genoPreview != null ? contextPath + "/downloads/" + genoPreview.getParentFile().getName()+ "/"  + genoPreview.getName() : "";
+	}
+
 	public File getProjectFile()
 		{ return projectFile; }
 
@@ -337,4 +386,28 @@ public class ResultsManagedBean implements Serializable
 
 	public void setByPosition(boolean byPosition)
 		{ this.byPosition = byPosition; }
+
+	public List<File> getMapFiles()
+		{ return mapFiles; }
+
+	public void setMapFiles(List<File> mapFiles)
+		{ this.mapFiles = mapFiles; }
+
+	public List<File> getGenotypeFiles()
+		{ return genotypeFiles; }
+
+	public void setGenotypeFiles(List<File> genotypeFiles)
+		{ this.genotypeFiles = genotypeFiles; }
+
+	public List<File> getQtlFiles()
+		{ return qtlFiles; }
+
+	public void setQtlFiles(List<File> qtlFiles)
+		{ this.qtlFiles = qtlFiles; }
+
+	public File getGenoPreview()
+		{ return genoPreview; }
+
+	public void setGenoPreview(File genoPreview)
+		{ this.genoPreview = genoPreview; }
 }

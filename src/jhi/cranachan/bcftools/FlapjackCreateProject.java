@@ -12,6 +12,7 @@ public class FlapjackCreateProject
 	private File mapFile;
 	private File projectFile;
 	private File qtlFile;
+	private String datasetName;
 
 	public FlapjackCreateProject(File genotypeFile, File projectFile)
 	{
@@ -30,6 +31,13 @@ public class FlapjackCreateProject
 	{
 		if (qtlFile != null && qtlFile.exists())
 			this.qtlFile = qtlFile;
+
+		return this;
+	}
+
+	public FlapjackCreateProject withDatasetName(String datasetName)
+	{
+		this.datasetName = datasetName;
 
 		return this;
 	}
@@ -59,6 +67,11 @@ public class FlapjackCreateProject
 		{
 			args.add("-q");
 			args.add(qtlFile.getPath());
+		}
+		if (datasetName != null)
+		{
+			args.add("-n");
+			args.add(datasetName);
 		}
 
 		ProcessBuilder pb = new ProcessBuilder(args);
