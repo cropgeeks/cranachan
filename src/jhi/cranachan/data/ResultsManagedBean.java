@@ -120,8 +120,10 @@ public class ResultsManagedBean implements Serializable
 
 			try
 			{
+				// Copy map file to accessible folder
+				Files.copy(mapFile.toPath(), new File(genotypeOutputDir, mapFile.getName()).toPath());
+				// Copy genotype file to accesible folder and grab the path for the drop down menu
 				Path path = Files.copy(genotypeFile.toPath(), new File(genotypeOutputDir, genotypeFile.getName()).toPath());
-				System.out.println(path);
 				genotypeFiles.add(path.toFile());
 			}
 			catch (Exception e)
@@ -210,8 +212,10 @@ public class ResultsManagedBean implements Serializable
 
 					try
 					{
+						// Copy map file to accessible folder
+						Files.copy(mapFile.toPath(), new File(genotypeOutputDir, mapFile.getName()).toPath());
+						// Copy genotype file to accesible folder and grab the path for the drop down menu
 						Path path = Files.copy(genotypeFile.toPath(), new File(genotypeOutputDir, genotypeFile.getName()).toPath());
-						System.out.println(path);
 						genotypeFiles.add(path.toFile());
 					}
 					catch (Exception e)
@@ -361,6 +365,20 @@ public class ResultsManagedBean implements Serializable
 		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 
 		return genoPreview != null ? contextPath + "/downloads/" + genoPreview.getParentFile().getName()+ "/"  + genoPreview.getName() : "";
+	}
+
+	public String getPathToMapFile()
+	{
+		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+
+		if (genoPreview != null)
+		{
+			String mapFileName = changeFileExtension(genoPreview.getName(), ".map");
+
+			return contextPath + "/downloads/" + genoPreview.getParentFile().getName()+ "/"  + mapFileName;
+		}
+
+		return "";
 	}
 
 	public File getProjectFile()

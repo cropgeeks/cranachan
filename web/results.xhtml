@@ -88,15 +88,18 @@
                 </h:form>
             </div>
 
-            <div class="row top-buffer" id="canvas-holder">
+            <div class="row top-buffer">
+                <div class="col" id="canvas-holder">
+                </div>
             </div>
         </ui:fragment>
 
-        <script type="text/javascript" src="resources/js/fjcanvas.js"></script>
+        <script src="resources/js/flapjack-bytes.js"></script>
 
         <script>
             jQuery(document).ready(function() {
-                loadGenotypeData('#{resultsManagedBean.pathToGenotypeFile}');
+                var renderer = GenotypeRenderer.GenotypeRenderer();
+                renderer.renderGenotypesUrl("#canvas-holder", 800, 600, '#{resultsManagedBean.pathToMapFile}', '#{resultsManagedBean.pathToGenotypeFile}');
             });
         </script>
     </ui:define>
