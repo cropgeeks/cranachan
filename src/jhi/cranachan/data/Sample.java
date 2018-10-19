@@ -8,6 +8,11 @@ public class Sample
 	{
 	}
 
+	public Sample(String name)
+	{
+		this.name = name;
+	}
+
 	public String getName()
 		{ return name; }
 

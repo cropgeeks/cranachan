@@ -22,10 +22,12 @@ public class ExtractorManagedBean implements Serializable
 	private String selectedChromosome;
 	private long extractStart;
 	private long extractEnd;
+	private SampleList sampleList;
 
-	private List<Sample> samples;
-	private List<Sample> selectedSamples;
-	private DualListModel<Sample> sampleModel;
+	private List<SampleList> sampleLists;
+//	private List<Sample> samples;
+//	private List<Sample> selectedSamples;
+//	private DualListModel<Sample> sampleModel;
 	private String sampleGroupName;
 
 	@Inject
@@ -49,22 +51,24 @@ public class ExtractorManagedBean implements Serializable
 
 		dataset = datasetDAO.getById(datasetId);
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
-		samples = sampleDAO.getByDatasetId(datasetId);
-		selectedSamples = new ArrayList<Sample>();
-		sampleModel = new DualListModel<Sample>(samples, selectedSamples);
+		sampleLists = sampleListDAO.getByDatasetId(datasetId);
+
+//		samples = sampleDAO.getByDatasetId(datasetId);
+//		selectedSamples = new ArrayList<Sample>();
+//		sampleModel = new DualListModel<Sample>(samples, selectedSamples);
 		sampleGroupName = "";
 	}
 
-	public void processList()
-	{
-		List<Sample> selected = sampleModel.getTarget();
-
-		String value = selected.stream()
-		   .map(Sample::getName)
-		   .collect(Collectors.joining("\t"));
-
-		sampleListDAO.addList(sampleGroupName, ""+dataset.getId(), value);
-	}
+//	public void processList()
+//	{
+//		List<Sample> selected = sampleModel.getTarget();
+//
+//		String value = selected.stream()
+//		   .map(Sample::getName)
+//		   .collect(Collectors.joining("\t"));
+//
+//		sampleListDAO.addList(sampleGroupName, ""+dataset.getId(), value);
+//	}
 
 	public Dataset getDataset()
 		{ return dataset; }
@@ -96,14 +100,26 @@ public class ExtractorManagedBean implements Serializable
 	public void setExtractEnd(long extractEnd)
 		{ this.extractEnd = extractEnd; }
 
-	public List<Sample> getSamples()
-		{ return samples; }
+//	public List<Sample> getSamples()
+//		{ return samples; }
+//
+//	public DualListModel<Sample> getSampleModel()
+//		{ return sampleModel; }
+//
+//	public void setSampleModel(DualListModel<Sample> sampleModel)
+//		{ this.sampleModel = sampleModel; }
 
-	public DualListModel<Sample> getSampleModel()
-		{ return sampleModel; }
+	public SampleList getSampleList()
+		{ return sampleList; }
 
-	public void setSampleModel(DualListModel<Sample> sampleModel)
-		{ this.sampleModel = sampleModel; }
+	public void setSampleList(SampleList sampleList)
+		{ this.sampleList = sampleList; }
+
+	public List<SampleList> getSampleLists()
+		{ return sampleLists; }
+
+	public void setSampleLists(List<SampleList> sampleLists)
+		{ this.sampleLists = sampleLists; }
 
 	public String getSampleGroupName()
 		{ return sampleGroupName; }

@@ -47,6 +47,14 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Samples to extract SNPs for</label>
+                            <div class="col-sm-8">
+                                <h:selectOneMenu id="sampleList" value="#{extractorManagedBean.sampleList}" converter="#{sampleListConverter}">
+                                    <f:selectItems value="#{extractorManagedBean.sampleLists}" var="sampleList" itemValue="#{sampleList.id}" itemLabel="#{sampleList.name}"/>
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <div class="mx-auto col-sm-4">
                                 <input type="submit" value="Extract"/>
                             </div>
