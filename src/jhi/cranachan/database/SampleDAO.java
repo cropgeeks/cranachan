@@ -13,7 +13,7 @@ import jhi.cranachan.data.*;
 @ApplicationScoped
 public class SampleDAO
 {
-	private static final String ALL_SAMPLES = "SELECT name FROM samples_to_datasets, samples WHERE dataset_id=? and samples_to_datasets.sample_id = samples.id order by name;";
+	private static final String ALL_SAMPLES = "SELECT name, published FROM samples_to_datasets, samples WHERE dataset_id=? and samples_to_datasets.sample_id = samples.id order by name;";
 
 	@Resource(name = "jdbc/cranachan")
 	private DataSource ds;
@@ -34,6 +34,7 @@ public class SampleDAO
 			{
 				Sample sample = new Sample();
 				sample.setName(resultSet.getString(1));
+				sample.setPublished(resultSet.getBoolean(2));
 
 				samples.add(sample);
 			}

@@ -25,17 +25,12 @@ public class ExtractorManagedBean implements Serializable
 	private SampleList sampleList;
 
 	private List<SampleList> sampleLists;
-//	private List<Sample> samples;
-//	private List<Sample> selectedSamples;
-//	private DualListModel<Sample> sampleModel;
 	private String sampleGroupName;
 
 	@Inject
 	private DatasetDAO datasetDAO;
 	@Inject
 	private ReferenceDAO referenceDAO;
-	@Inject
-	private SampleDAO sampleDAO;
 	@Inject
 	private SampleListDAO sampleListDAO;
 
@@ -53,22 +48,8 @@ public class ExtractorManagedBean implements Serializable
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
 		sampleLists = sampleListDAO.getByDatasetId(datasetId);
 
-//		samples = sampleDAO.getByDatasetId(datasetId);
-//		selectedSamples = new ArrayList<Sample>();
-//		sampleModel = new DualListModel<Sample>(samples, selectedSamples);
 		sampleGroupName = "";
 	}
-
-//	public void processList()
-//	{
-//		List<Sample> selected = sampleModel.getTarget();
-//
-//		String value = selected.stream()
-//		   .map(Sample::getName)
-//		   .collect(Collectors.joining("\t"));
-//
-//		sampleListDAO.addList(sampleGroupName, ""+dataset.getId(), value);
-//	}
 
 	public Dataset getDataset()
 		{ return dataset; }
@@ -99,15 +80,6 @@ public class ExtractorManagedBean implements Serializable
 
 	public void setExtractEnd(long extractEnd)
 		{ this.extractEnd = extractEnd; }
-
-//	public List<Sample> getSamples()
-//		{ return samples; }
-//
-//	public DualListModel<Sample> getSampleModel()
-//		{ return sampleModel; }
-//
-//	public void setSampleModel(DualListModel<Sample> sampleModel)
-//		{ this.sampleModel = sampleModel; }
 
 	public SampleList getSampleList()
 		{ return sampleList; }

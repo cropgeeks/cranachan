@@ -14,7 +14,7 @@ public class DatabaseUtils
 		return statement;
 	}
 
-	public static PreparedStatement createInsertStatement(Connection con, String query, Object... values)
+	public static PreparedStatement createPreparedStatement(Connection con, String query, Object... values)
 			throws SQLException
 	{
 		PreparedStatement stmt = con.prepareStatement(query);
