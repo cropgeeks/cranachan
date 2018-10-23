@@ -16,7 +16,7 @@ public class BcfToolsView
 	private static Logger LOG = Logger.getLogger(BcfToolsView.class.getName());
 
 	private File bcfFile;
-	private String outputType, outputFile, regions, types, samples;
+	private String outputType, outputFile, regions, types, samples, qualityFilter;
 
 	/**
 	 * Constructs a new BcfToolsView object that will run bcftools upon the
@@ -66,6 +66,12 @@ public class BcfToolsView
 		return this;
 	}
 
+	public BcfToolsView withQualityFilter(int score)
+	{
+		this.qualityFilter = "--include=QUAL>=" + score;
+		return this;
+	}
+
 	public void run(String bcftools, String tmpDir)
 		throws Exception
 	{
@@ -79,6 +85,8 @@ public class BcfToolsView
 			args.add(regions);
 		if (samples != null)
 			args.add("--samples-file=" + createSamplesFile(tmpDir));
+		if (qualityFilter != null)
+			args.add(qualityFilter);
 		if (outputType != null)
 			args.add(outputType);
 		if (outputFile != null)

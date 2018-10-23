@@ -3,7 +3,6 @@ package jhi.cranachan.data;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.*;
 import javax.annotation.*;
 import javax.faces.context.*;
 import javax.faces.event.*;
@@ -89,6 +88,7 @@ public class ResultsManagedBean implements Serializable
 		String chromosome = requestParams.get("chr");
 		long start = Long.parseLong(requestParams.get("start"));
 		long end = Long.parseLong(requestParams.get("end"));
+		int minQualScore = Integer.parseInt(requestParams.get("minQualScore"));
 		String datasetId = requestParams.get("datasetId");
 		String sampleListId = requestParams.get("sampleList");
 
@@ -105,7 +105,7 @@ public class ResultsManagedBean implements Serializable
 		String name = chromosome + "-" + start + "-" + end;
 
 		// Run bcftools and generate the file
-		File file = runBcfToolsView(name, dataset, chromosome, start, end, sampleList);
+		File file = runBcfToolsView(name, dataset, chromosome, start, end, sampleList, minQualScore);
 
 		File stats = runBcfToolsStats(file.getName(), file);
 		long snpCount = getSnpCount(stats);
@@ -171,7 +171,6 @@ public class ResultsManagedBean implements Serializable
 
 	private void createByGeneRows(Map<String, String> requestParams)
 	{
-		requestParams.entrySet().forEach((k -> System.out.println(k.getKey() + " : " + k.getValue())));
 		// Retrieve parameters from the request map which have been posted to the results page
 		String geneList = requestParams.get("geneList");
 		int extendRegion = Integer.parseInt(requestParams.get("extendRegion"));
@@ -205,7 +204,7 @@ public class ResultsManagedBean implements Serializable
 			// in the JSF page to generate the table
 			for(Gene gene: genes)
 			{
-				File file = runBcfToolsView(gene.getName(), dataset, gene.getChromosome(), gene.getStart()-extendRegion, gene.getEnd()+extendRegion, sampleList);
+				File file = runBcfToolsView(gene.getName(), dataset, gene.getChromosome(), gene.getStart()-extendRegion, gene.getEnd()+extendRegion, sampleList, minQualScore);
 
 				File stats = runBcfToolsStats(file.getName(), file);
 				long snpCount = getSnpCount(stats);
@@ -268,7 +267,7 @@ public class ResultsManagedBean implements Serializable
 			genoPreview = genotypeFiles.get(0);
 	}
 
-	private File runBcfToolsView(String name, Dataset dataset, String chromosomeName, long start, long end, SampleList sampleList)
+	private File runBcfToolsView(String name, Dataset dataset, String chromosomeName, long start, long end, SampleList sampleList, int qualityFilter)
 	{
 		File output = new File(outputDir, name + ".vcf");
 		try
@@ -278,6 +277,7 @@ public class ResultsManagedBean implements Serializable
 				.withVCFOutput()
 				.withRegions(chromosomeName, start, end)
 				.withOnlySamples(String.join("\t", sampleList.asTabSeparatedString()))
+				.withQualityFilter(qualityFilter)
 				.withOutputFile(output);
 
 			view.run("BCFTOOLS", outputDir.getAbsolutePath());

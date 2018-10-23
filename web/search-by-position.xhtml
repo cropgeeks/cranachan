@@ -44,6 +44,16 @@
 							</div>
 						</div>
 						<div class="form-group row">
+							<label class="col-sm-4 col-form-label" for="minQualScore">Include SNPs with quality scores above</label>
+							<div class="col-sm-8">
+								<input type="text" jsf:id="minQualScore" width="30" class="form-control" value="20"/>
+							</div>
+							<div class="col-sm-12">
+								<p>Note: The overall quality score for a SNP is a a Phred-like score. A value of 20 corresponds to a 1 in 100 chance of the SNP
+									call being wrong. A value of 30 corresponds to a 1 in 1000 chance of the SNP call being wrong.</p>
+							</div>
+						</div>
+						<div class="form-group row">
 							<label class="col-sm-4 col-form-label">Samples to extract SNPs for</label>
 							<div class="col-sm-8">
 								<h:selectOneMenu id="sampleList" value="#{extractorManagedBean.sampleList}" converter="#{sampleListConverter}">
