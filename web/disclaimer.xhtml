@@ -1,0 +1,64 @@
+<ui:composition template="layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:define name="main-content">
+        <f:metadata>
+            <f:viewAction action="#{disclaimerManagedBean.checkCookie}"/>
+        </f:metadata>
+        <div class="row top-buffer">
+            <h1>Cranachan - Data usage disclaimer</h1>
+        </div>
+
+        <div class="row top-buffer justify-content-start">
+            <div class="col-8">
+                <div class="row">
+                    <p>The majority of barley lines used for producing the datasets available are unpublished. Publication of
+                        the full dataset is in the planning stages and likely to occur in the first half of 2019. Until
+                        publication of the full dataset, publication of genotypes from unpublished lines is not permitted.
+                    </p>
+                </div>
+
+                <div class="row">
+                    <p>
+                        Of the 1,336 lines used, there are 275 published lines listed in the spreadsheet downloadable from
+                        here. These formed part of two publications which are listed in the spreadsheet. Publication of
+                        genotypes from these lines is permitted, but the source publication should be cited in all cases.
+                    </p>
+                </div>
+                <div class="row">
+                    <p>
+                        For further enquiries please contact <a href="mailto:robbie.waugh@hutton.ac.uk">Robbie Waugh</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row top-buffer">
+            <form jsf:id="checkboxForm">
+                <div class="form-group row">
+                    <div class="col-12">
+                        <h:selectBooleanCheckbox id="accepted" value="#{disclaimerManagedBean.checked}">
+                            <f:ajax render="submit-form"/>
+                        </h:selectBooleanCheckbox>
+                        <label for="accepted">I acknowledge having read and accepted the publication conditions above</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <form jsf:id="submit-form" jsf:prependId="false" action="search-by-gene.xhtml" method="post">
+                <input type="hidden" jsf:id="datasetId" value="#{disclaimerManagedBean.datasetId}"/>
+                <input type="hidden" jsf:id="acceptedDisclaimer" value="#{disclaimerManagedBean.checked}"/>
+                <div class="form-group row">
+                    <div class="col-12">
+                        <input type="submit" jsf:id="submit" value="Proceed" jsf:disabled="#{!disclaimerManagedBean.checked}"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </ui:define>
+</ui:composition>
