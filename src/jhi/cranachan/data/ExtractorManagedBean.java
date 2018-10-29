@@ -17,13 +17,12 @@ public class ExtractorManagedBean implements Serializable
 	private Dataset dataset;
 	private Reference reference;
 
-	private String selectedChromosome;
+	private Chromosome selectedChromosome;
 	private long extractStart;
 	private long extractEnd;
 	private SampleList sampleList;
 
 	private List<SampleList> sampleLists;
-	private String sampleGroupName;
 
 	@Inject
 	private DatasetDAO datasetDAO;
@@ -40,8 +39,6 @@ public class ExtractorManagedBean implements Serializable
 	public void init()
 	{
 		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-		for (String key : params.keySet())
-			System.out.println(key + ": " + params.get(key));
 
 		String datasetId = params.get("datasetId");
 
@@ -55,7 +52,7 @@ public class ExtractorManagedBean implements Serializable
 		reference = referenceDAO.getById("" + dataset.getRefSeqSetId());
 		sampleLists = sampleListDAO.getByDatasetId(datasetId);
 
-		sampleGroupName = "";
+		selectedChromosome = reference.getChromosomes().get(0);
 	}
 
 	private void setCookie(boolean acceptedDisclaimer, String datasetId)
@@ -97,10 +94,10 @@ public class ExtractorManagedBean implements Serializable
 	public void setReference(Reference reference)
 		{ this.reference = reference; }
 
-	public String getSelectedChromosome()
+	public Chromosome getSelectedChromosome()
 		{ return selectedChromosome; }
 
-	public void setSelectedChromosome(String selectedChromosome)
+	public void setSelectedChromosome(Chromosome selectedChromosome)
 		{ this.selectedChromosome = selectedChromosome; }
 
 	public long getExtractStart()
@@ -126,10 +123,4 @@ public class ExtractorManagedBean implements Serializable
 
 	public void setSampleLists(List<SampleList> sampleLists)
 		{ this.sampleLists = sampleLists; }
-
-	public String getSampleGroupName()
-		{ return sampleGroupName; }
-
-	public void setSampleGroupName(String sampleGroupName)
-		{ this.sampleGroupName = sampleGroupName; }
 }

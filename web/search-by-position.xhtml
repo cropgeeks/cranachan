@@ -26,7 +26,7 @@
 						<div class="form-group row">
 							<label class="col-sm-4 col-form-label" for="chr">Pick chromosome</label>
 							<div class="col-sm-8">
-								<h:selectOneMenu id="chr" name="chromosome" value="#{extractorManagedBean.selectedChromosome}" class="form-control">
+								<h:selectOneMenu id="chr" name="chromosome" value="#{extractorManagedBean.selectedChromosome}" converter="#{chromosomeConverter}" class="form-control">
 									<f:selectItems value="#{extractorManagedBean.reference.chromosomes}" var="chromosome" itemValue="#{chromosome.name}" itemLabel="#{chromosome.name}"/>
 								</h:selectOneMenu>
 							</div>
@@ -34,19 +34,19 @@
 						<div class="form-group row">
 							<label class="col-sm-4 col-form-label" for="start">Start</label>
 							<div class="col-sm-8">
-								<input class="form-control" type="text" jsf:id="start" placeholder="1" value="#{extractorManagedBean.extractStart}"/>
+								<input class="form-control" type="number" jsf:id="start" value="#{extractorManagedBean.extractStart}" required="required" min="1" max="#{extractorManagedBean.selectedChromosome.length}"/>
 							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-4 col-form-label" for="end">End</label>
 							<div class="col-sm-8">
-								<input class="form-control" type="text" jsf:id="end" placeholder="300000" value="#{extractorManagedBean.extractEnd}"/>
+								<input class="form-control" type="number" jsf:id="end" value="#{extractorManagedBean.extractEnd}" required="required" min="1" max="#{extractorManagedBean.selectedChromosome.length}"/>
 							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-4 col-form-label" for="minQualScore">Include SNPs with quality scores above</label>
 							<div class="col-sm-8">
-								<input type="text" jsf:id="minQualScore" width="30" class="form-control" value="20"/>
+								<input type="number" jsf:id="minQualScore" width="30" class="form-control" value="20" required="required" min="1" max="2147483647"/>
 							</div>
 							<div class="col-sm-12">
 								<p>Note: The overall quality score for a SNP is a a Phred-like score. A value of 20 corresponds to a 1 in 100 chance of the SNP
