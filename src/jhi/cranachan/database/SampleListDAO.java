@@ -16,8 +16,8 @@ import javax.sql.*;
 public class SampleListDAO
 {
 	private static final String SAMPLE_LISTS = "SELECT sample_lists.id, sample_lists.name, GROUP_CONCAT(DISTINCT samples.name ORDER BY samples.name SEPARATOR  '\\t') sample_names FROM sample_lists JOIN sample_lists_to_samples ON projects_id = sample_lists.id JOIN samples ON sample_lists_to_samples.samples_id = samples.id JOIN samples_to_datasets ON samples_to_datasets.sample_id = samples.id WHERE samples_to_datasets.dataset_id = ? GROUP BY sample_lists.id";
-	private static final String SAMPLE_LISTS_BY_ID_DATASET = "SELECT sample_lists.id, sample_lists.name, GROUP_CONCAT(DISTINCT samples.name ORDER BY samples.name SEPARATOR  '\\t') sample_names FROM sample_lists JOIN sample_lists_to_samples ON projects_id = sample_lists.id JOIN samples ON sample_lists_to_samples.samples_id = samples.id JOIN samples_to_datasets ON samples_to_datasets.sample_id = samples.id WHERE samples_to_datasets.dataset_id = ? AND sample_lists_to_samples.projects_id = ? GROUP BY sample_lists.id";
-	private static final String SAMPLE_LISTS_BY_ID_PUBLISHED = "SELECT sample_lists.id, sample_lists.name, GROUP_CONCAT(DISTINCT samples.name ORDER BY samples.name SEPARATOR  '\\t') sample_names FROM sample_lists JOIN sample_lists_to_samples ON projects_id = sample_lists.id JOIN samples ON sample_lists_to_samples.samples_id = samples.id JOIN samples_to_datasets ON samples_to_datasets.sample_id = samples.id WHERE samples_to_datasets.dataset_id = ? AND sample_lists_to_samples.projects_id = ? AND samples.published IS TRUE GROUP BY sample_lists.id";
+	private static final String SAMPLE_LISTS_BY_ID_DATASET = "SELECT sample_lists.id, sample_lists.name, samples.name FROM sample_lists JOIN sample_lists_to_samples ON projects_id = sample_lists.id JOIN samples ON sample_lists_to_samples.samples_id = samples.id JOIN samples_to_datasets ON samples_to_datasets.sample_id = samples.id WHERE samples_to_datasets.dataset_id = ? AND sample_lists_to_samples.projects_id = ?";
+	private static final String SAMPLE_LISTS_BY_ID_PUBLISHED = "SELECT sample_lists.id, sample_lists.name, samples.name FROM sample_lists JOIN sample_lists_to_samples ON projects_id = sample_lists.id JOIN samples ON sample_lists_to_samples.samples_id = samples.id JOIN samples_to_datasets ON samples_to_datasets.sample_id = samples.id WHERE samples_to_datasets.dataset_id = ? AND sample_lists_to_samples.projects_id = ? AND samples.published IS TRUE";
 	private static final String SAMPLE_LISTS_BY_ID = "SELECT sample_lists.id, sample_lists.name, GROUP_CONCAT(DISTINCT samples.name ORDER BY samples.name SEPARATOR  '\\t') sample_names FROM sample_lists JOIN sample_lists_to_samples ON projects_id = sample_lists.id JOIN samples ON sample_lists_to_samples.samples_id = samples.id JOIN samples_to_datasets ON samples_to_datasets.sample_id = samples.id WHERE sample_lists_to_samples.projects_id = ? GROUP BY sample_lists.id";
 
 	@Resource(name = "jdbc/cranachan")
@@ -37,15 +37,17 @@ public class SampleListDAO
 			 PreparedStatement stmt = DatabaseUtils.createPreparedStatement(con, query, datasetId, id);
 			 ResultSet resultSet = stmt.executeQuery())
 		{
-			if (resultSet.next())
+			List<Sample> samples = new ArrayList<>();
+			while (resultSet.next())
 			{
 				sampleList.setId(resultSet.getString(1));
 				sampleList.setName(resultSet.getString(2));
 
-				String samplesString = resultSet.getString(3);
-				List<Sample> samples = Stream.of(samplesString.split("\t")).map(Sample::new).collect(Collectors.toCollection(ArrayList::new));
-				sampleList.setSamples(samples);
+				String sampleName = resultSet.getString(3);
+				samples.add(new Sample(sampleName));
 			}
+			samples.sort(Comparator.comparing(Sample::getName));
+			sampleList.setSamples(samples);
 		}
 		catch (SQLException e)
 		{
