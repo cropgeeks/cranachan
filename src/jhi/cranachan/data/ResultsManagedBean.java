@@ -193,7 +193,10 @@ public class ResultsManagedBean implements Serializable
 
 		String name = String.join("-", geneNames);
 		String projectFileName = name + ".flapjack";
-		projectFile = new File(projectOutputDir, projectFileName);
+		if (geneNames.length == 1)
+			projectFile = new File(projectOutputDir, projectFileName);
+		else
+			projectFile = new File(projectOutputDir, dataset.getName() + ".flapjack");
 
 		// Iterate over the gene names provided by the user and retrieve those that we can find from the database
 		for(String geneName : geneNames)
