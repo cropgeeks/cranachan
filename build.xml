@@ -4,6 +4,7 @@
 
 	<property name="web" location="web"/>
 	<property name="src" location="src"/>
+	<property name="tmp" location="tmp"/>
 	<property name="lib" location="lib"/>
 	<property name="cls" location="classes"/>
 	<property name="war" value="${tomcat.manager.app}.war"/>
@@ -37,17 +38,16 @@
 			  tofile="${web}/META-INF/context.xml"
 			  overwrite="true" filtering="true"/>
 
+		<copy todir="${tmp}" flatten="true">
+			<fileset dir="${lib}">
+				<exclude name="**/lib-devel/**"/>
+			</fileset>
+		</copy>
+
 		<war destfile="${war}" update="false" basedir="${web}">
 			<exclude name="**/*.template"/>
 			<classes dir="${cls}"/>
-			<lib dir="${lib}">
-				<exclude name="**/lib-devel/**"/>
-				<exclude name="**/flapjack/**"/>
-			</lib>
-			<mappedresources>
-				<fileset dir="${lib}"/>
-				<globmapper from="flapjack/*.jar" to="WEB-INF/lib/*.jar"/>
-			</mappedresources>
+			<lib dir="${tmp}"/>
 		</war>
 
 		<taskdef name="undeploy" classpathref="project.classpath"
@@ -61,8 +61,9 @@
 		<deploy url="${tomcat.manager.url}"	username="${tomcat.manager.username}" password="${tomcat.manager.password}"
 			path="/${tomcat.manager.app}" war="${war}"/>
 
-		<delete file="${war}"/>
+<!--		<delete file="${war}"/>-->
 		<delete file="${web}/META-INF/context.xml"/>
+		<delete dir="${tmp}"/>
 	</target>
 
 </project>
