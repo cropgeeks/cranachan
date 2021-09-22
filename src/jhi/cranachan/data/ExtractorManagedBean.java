@@ -18,8 +18,8 @@ public class ExtractorManagedBean implements Serializable
 	private Reference reference;
 
 	private Chromosome selectedChromosome;
-	private long extractStart;
-	private long extractEnd;
+	private long extractStart = 1;
+	private long extractEnd = 1;
 	private SampleList sampleList;
 
 	private List<SampleList> sampleLists;
